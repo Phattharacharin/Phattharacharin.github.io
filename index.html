@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
 
 * {
     margin: 0;
@@ -7,92 +7,161 @@
 }
 
 body {
-    font-family: 'Prompt', sans-serif;
-    background-color: #0f172a; /* สีน้ำเงินมืดแบบ Modern Dark */
-    color: #e2e8f0;
-    min-height: 100vh;
-    padding: 30px 15px;
+    font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #f1f5f9; /* สีเทาฟ้าอ่อน สบายตา */
+    color: #334155;
+    line-height: 1.6;
+    padding: 40px 15px;
 }
 
 .container {
     max-width: 1100px;
     margin: 0 auto;
-    background: #1e293b;
-    border-radius: 12px;
-    border: 1px solid #334155;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.05);
     overflow: hidden;
 }
 
+/* Header เรียบสะอาดตา */
 .header {
-    background: #0f172a;
-    border-bottom: 1px solid #334155;
-    color: #fff;
-    padding: 35px 20px;
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 45px 20px;
     text-align: center;
 }
 
 .header h1 {
-    font-size: 2.2rem;
-    color: #38bdf8; /* สีฟ้าสว่าง */
-    letter-spacing: 0.5px;
+    font-size: 2.1rem;
+    font-weight: 600;
+    color: #0f172a;
+    letter-spacing: -0.5px;
 }
 
 .header p {
-    font-size: 1rem;
-    color: #94a3b8;
-    margin-top: 5px;
+    font-size: 0.98rem;
+    color: #64748b;
+    margin-top: 6px;
+    font-weight: 300;
 }
 
+/* Layout Content */
 .content {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 30px;
-    padding: 35px;
+    gap: 36px;
+    padding: 40px;
 }
 
 .cv-section h2, .graphics-section h2 {
-    color: #f8fafc;
-    font-size: 1.3rem;
+    color: #0f172a;
+    font-size: 1.25rem;
+    font-weight: 600;
     margin-bottom: 20px;
-    border-left: 4px solid #38bdf8;
-    padding-left: 10px;
-    border-bottom: none; /* ปลดเส้นใต้ออก */
+    padding-bottom: 8px;
+    border-bottom: 2px solid #2563eb; /* เส้นเน้นสีน้ำเงินเรียบๆ */
+    display: inline-block;
+}
+
+.cv-section h3 {
+    color: #1e293b;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 12px;
+    margin-bottom: 4px;
 }
 
 .info-box {
-    background: #0f172a;
-    padding: 15px;
-    border: 1px solid #334155;
-    margin-bottom: 15px;
-    border-radius: 8px;
+    background: #f8fafc;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 16px;
 }
 
 .info-box p {
-    color: #cbd5e1;
-    font-size: 0.95rem;
+    color: #475569;
+    font-size: 0.92rem;
     margin-bottom: 6px;
 }
 
+.info-box strong {
+    color: #0f172a;
+}
+
+/* Graphics Section */
+.graphics-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 canvas {
-    border: 2px solid #38bdf8;
-    border-radius: 8px;
-    background: #000;
-    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    background: #090d16; /* Canvas ดำเข้มเพื่อให้ Sprite โดดเด่น */
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+    width: 400px;
+    height: 400px;
 }
 
 .controls {
-    background: #0f172a;
-    border: 1px solid #334155;
-    padding: 15px;
-    border-radius: 8px;
-    color: #94a3b8;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 18px;
+    border-radius: 10px;
+    color: #475569;
+    font-size: 0.88rem;
+    width: 100%;
+    text-align: center;
+}
+
+.controls p {
+    margin: 6px 0;
 }
 
 .key {
-    background: #38bdf8;
+    background: #e2e8f0;
     color: #0f172a;
+    border: 1px solid #cbd5e1;
     padding: 2px 7px;
     border-radius: 4px;
-    font-weight: bold;
+    font-weight: 600;
     font-family: monospace;
+    font-size: 0.85em;
+}
+
+.algorithm-info {
+    background: #eff6ff; /* กล่องฟ้าอ่อนสบายตา */
+    border: 1px solid #bfdbfe;
+    color: #1e3a8a;
+    padding: 12px 15px;
+    margin-top: 14px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    text-align: left;
+    line-height: 1.5;
+}
+
+footer {
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    padding: 20px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .content {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+    
+    canvas {
+        width: 100%;
+        height: auto;
+    }
 }
