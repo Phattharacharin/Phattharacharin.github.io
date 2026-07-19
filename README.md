@@ -1,2 +1,2 @@
-# ttharacharin.github.io
+# Phattharacharin.github.io
 CV with Interactive Graphics
