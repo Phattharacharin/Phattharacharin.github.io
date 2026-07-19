@@ -101,7 +101,7 @@
             margin-bottom: 15px;
             width: 400px;
             height: 400px;
-            cursor: crosshair;
+            cursor: pointer;
         }
 
         .controls {
@@ -192,8 +192,8 @@
                 <div class="info-box">
                     <p><strong>Raster Graphics Functions:</strong></p>
                     <p>• putPixel() - วาดพิกเซลทีละจุด</p>
-                    <p>• drawLine() - วาดเส้นตรงด้วยอัลกอริทึม</p>
                     <p>• drawSprite24Bit() - วาด Sprite สี 24-bit (RGB)</p>
+                    <p>• Color Picking - คำนวณพิกัดคลิกบนวัตถุ</p>
                 </div>
 
                 <div class="info-box">
@@ -211,32 +211,27 @@
                 <canvas id="canvas" width="200" height="200"></canvas>
 
                 <div class="controls">
-                    <p><strong>Keyboard Control</strong></p>
+                    <p><strong>Keyboard Controls</strong></p>
                     <p>
-                        <span class="key">1</span> ปากกาแดง | 
-                        <span class="key">2</span> ปากกาเขียว | 
-                        <span class="key">3</span> ปากกาน้ำเงิน
-                    </p>
-                    <p style="margin-top: 8px;">
-                        <span class="key">↑</span> / <span class="key">↓</span> : ขยาย / ย่อ Sprite (Scale)
+                        <span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span class="key">D</span> : เลื่อนตำแหน่ง (Translate)
                     </p>
                     <p>
                         <span class="key">←</span> / <span class="key">→</span> : หมุน Sprite (Rotate)
                     </p>
                     <p>
-                        <span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span class="key">D</span> : เลื่อนตำแหน่ง Sprite (Translate)
+                        <span class="key">↑</span> / <span class="key">↓</span> : ย่อ / ขยาย Sprite (Scale)
                     </p>
 
-                    <p style="margin-top: 10px; color: #64748b; font-size: 0.85em;">
-                        ลากเมาส์บน Canvas เพื่อวาดเส้น
+                    <p style="margin-top: 10px; color: #2563eb; font-weight: 500;">
+                        💡 คลิกที่ส่วนต่างๆ บนรูป Sprite เพื่อเปลี่ยนสีส่วนนั้น!
                     </p>
 
                     <div class="algorithm-info">
                         <strong>Algorithms Implementation:</strong><br>
                         • 24-Bit RGB Pixel Matrix<br>
-                        • Custom putPixel & Line Rasterization<br>
+                        • Custom putPixel Rendering<br>
                         • Backward Mapping Transformation<br>
-                        • Keyboard State Handling & Canvas Buffer
+                        • Interactive 2D Color Picking (Inverse Map)
                     </div>
                 </div>
             </div>
@@ -253,41 +248,31 @@
         const imageData = ctx.createImageData(canvas.width, canvas.height);
         const pixels = imageData.data;
 
-        // Buffer สำหรับเก็บเส้นที่วาดด้วยเมาส์
-        const lineBuffer = new Uint8ClampedArray(canvas.width * canvas.height * 4);
+        // 24-bit Color Palette Reference
+        const _ = null;
+        const K = [15, 23, 42];       // Black Outline
+        const W = [255, 255, 255];    // White
+        let   R = [239, 68, 68];      // Red (ส่วนบน)
+        const G = [203, 213, 225];    // Gray Button
 
-        // Palette 24-bit RGB
-        // 1. กำหนด Palette สีใหม่
-const _ = null;
-const K = [15, 23, 42];        // ดำขอบ
-const W = [255, 255, 255];     // ขาว
-const G = [203, 213, 225];     // เทาปุ่ม
-const B = [37, 99, 235];       // ฟ้า/น้ำเงิน (Blue)
-const O = [249, 115, 22];      // ส้ม (Orange - แถบข้าง)
-
-// 2. เอาตัวอักษร B และ O มาจัดวางในตาราง
-const sprite24Bit = [
-    [_, _, K, K, K, K, K, K, _, _],
-    [_, K, B, B, B, B, B, B, K, _],
-    [K, O, B, B, B, B, B, B, O, K],
-    [K, O, O, B, B, B, B, O, O, K],
-    [K, K, K, K, G, G, K, K, K, K],
-    [K, K, K, K, W, W, K, K, K, K],
-    [K, W, W, W, W, W, W, W, W, K],
-    [K, W, W, W, W, W, W, W, W, K],
-    [_, K, W, W, W, W, W, W, K, _],
-    [_, _, K, K, K, K, K, K, _, _]
-];
-          
+        // 24-Bit Sprite Matrix (Pokéball 10x10)
+        const sprite24Bit = [
+            [_, _, K, K, K, K, K, K, _, _],
+            [_, K, R, R, R, R, R, R, K, _],
+            [K, R, R, R, R, R, R, R, R, K],
+            [K, R, R, R, R, R, R, R, R, K],
+            [K, K, K, K, G, G, K, K, K, K],
+            [K, K, K, K, W, W, K, K, K, K],
+            [K, W, W, W, W, W, W, W, W, K],
+            [K, W, W, W, W, W, W, W, W, K],
+            [_, K, W, W, W, W, W, W, K, _],
+            [_, _, K, K, K, K, K, K, _, _]
+        ];
 
         let posX = canvas.width / 2;
         let posY = canvas.height / 2;
         let rotation = 0;
         let scale = 1.2;
-        let drawColor = { r: 0, g: 255, b: 0 };
-        let dragging = false;
-        let previousX = 0;
-        let previousY = 0;
         const keys = {};
 
         function putPixel(x, y, r, g, b, a = 255) {
@@ -299,46 +284,12 @@ const sprite24Bit = [
             pixels[idx + 3] = a;
         }
 
-        function putLinePixel(x, y, r, g, b) {
-            if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
-            const idx = (y * canvas.width + x) * 4;
-            lineBuffer[idx] = r;
-            lineBuffer[idx + 1] = g;
-            lineBuffer[idx + 2] = b;
-            lineBuffer[idx + 3] = 255;
-        }
-
         function fillBackground(r, g, b) {
             for (let i = 0; i < pixels.length; i += 4) {
                 pixels[i] = r;
                 pixels[i + 1] = g;
                 pixels[i + 2] = b;
                 pixels[i + 3] = 255;
-            }
-        }
-
-        function drawLine(x1, y1, x2, y2, r, g, b) {
-            const dx = Math.abs(x2 - x1);
-            const dy = Math.abs(y2 - y1);
-
-            if (dx > dy) {
-                const m = (x2 === x1) ? 0 : (y2 - y1) / (x2 - x1);
-                const c = y1 - m * x1;
-                const start = Math.min(x1, x2);
-                const end = Math.max(x1, x2);
-                for (let x = start; x <= end; x++) {
-                    const y = Math.round(m * x + c);
-                    putLinePixel(x, y, r, g, b);
-                }
-            } else {
-                const m = (y2 === y1) ? 0 : (x2 - x1) / (y2 - y1);
-                const c = x1 - m * y1;
-                const start = Math.min(y1, y2);
-                const end = Math.max(y1, y2);
-                for (let y = start; y <= end; y++) {
-                    const x = Math.round(m * y + c);
-                    putLinePixel(x, y, r, g, b);
-                }
             }
         }
 
@@ -376,46 +327,47 @@ const sprite24Bit = [
             }
         }
 
-        function getMousePos(canvas, event) {
+        // =========================================================
+        // Click Event: คำนวณ Backward Mapping หาจุดที่คลิกเพื่อเปลี่ยนสี
+        // =========================================================
+        canvas.addEventListener('click', (event) => {
             const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            return {
-                x: Math.floor((event.clientX - rect.left) * scaleX),
-                y: Math.floor((event.clientY - rect.top) * scaleY)
-            };
-        }
+            const mouseX = Math.floor((event.clientX - rect.left) * (canvas.width / rect.width));
+            const mouseY = Math.floor((event.clientY - rect.top) * (canvas.height / rect.height));
 
-        document.addEventListener('keydown', (e) => {
-            keys[e.key] = true;
+            const spriteW = sprite24Bit[0].length;
+            const spriteH = sprite24Bit.length;
 
-            if (e.key === '1') drawColor = { r: 255, g: 0, b: 0 };
-            if (e.key === '2') drawColor = { r: 0, g: 255, b: 0 };
-            if (e.key === '3') drawColor = { r: 0, g: 100, b: 255 };
-        });
+            const rad = -rotation * Math.PI / 180;
+            const cos = Math.cos(rad);
+            const sin = Math.sin(rad);
 
-        document.addEventListener('keyup', (e) => {
-            keys[e.key] = false;
-        });
+            const dx = mouseX - posX;
+            const dy = mouseY - posY;
 
-        canvas.addEventListener('mousedown', (event) => {
-            dragging = true;
-            const { x, y } = getMousePos(canvas, event);
-            previousX = x;
-            previousY = y;
-        });
+            // Inverse Matrix Rotation & Scale
+            const rotX = dx * cos - dy * sin;
+            const rotY = dx * sin + dy * cos;
 
-        canvas.addEventListener('mouseup', () => dragging = false);
-        canvas.addEventListener('mouseleave', () => dragging = false);
+            const spriteX = Math.floor(rotX / scale + spriteW / 2);
+            const spriteY = Math.floor(rotY / scale + spriteH / 2);
 
-        canvas.addEventListener('mousemove', (event) => {
-            if (dragging) {
-                const { x, y } = getMousePos(canvas, event);
-                drawLine(previousX, previousY, x, y, drawColor.r, drawColor.g, drawColor.b);
-                previousX = x;
-                previousY = y;
+            // เช็กว่าคลิกโดน Sprite หรือไม่
+            if (spriteY >= 0 && spriteY < spriteH && spriteX >= 0 && spriteX < spriteW) {
+                const targetColor = sprite24Bit[spriteY][spriteX];
+                
+                // ถ้าไม่คลิกตรงส่วนโปร่งใส (_) และไม่คลิกเส้นขอบสีดำ (K)
+                if (targetColor !== null && targetColor !== K) {
+                    // สุ่มสี RGB ใหม่
+                    targetColor[0] = Math.floor(Math.random() * 256);
+                    targetColor[1] = Math.floor(Math.random() * 256);
+                    targetColor[2] = Math.floor(Math.random() * 256);
+                }
             }
         });
+
+        document.addEventListener('keydown', (e) => keys[e.key] = true);
+        document.addEventListener('keyup', (e) => keys[e.key] = false);
 
         function update() {
             if (keys['ArrowUp']) scale += 0.05;
@@ -436,18 +388,8 @@ const sprite24Bit = [
 
         function animate() {
             fillBackground(0, 0, 0);
-
-            for (let i = 0; i < pixels.length; i += 4) {
-                if (lineBuffer[i + 3] !== 0) {
-                    pixels[i] = lineBuffer[i];
-                    pixels[i + 1] = lineBuffer[i + 1];
-                    pixels[i + 2] = lineBuffer[i + 2];
-                }
-            }
-
             update();
             drawSpriteWithTransform24Bit(sprite24Bit, posX, posY, rotation, scale);
-
             ctx.putImageData(imageData, 0, 0);
             requestAnimationFrame(animate);
         }
