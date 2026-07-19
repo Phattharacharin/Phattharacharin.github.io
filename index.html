@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phattharacharin - CV & Interactive Graphics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 40px;
+        }
+
+        .cv-section {
+            padding: 20px;
+        }
+
+        .cv-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .cv-section h3 {
+            color: #764ba2;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        .cv-section p, .cv-section li {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .cv-section ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .cv-section li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .info-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .graphics-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .graphics-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            width: 100%;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        canvas {
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            background: white;
+            image-rendering: pixelated;
+            margin-bottom: 15px;
+            width: 300px;
+            height: 300px;
+        }
+
+        .controls {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            width: 100%;
+            text-align: center;
+            color: #333;
+        }
+
+        .controls p {
+            margin: 5px 0;
+        }
+
+        .key {
+            background: #667eea;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 0 3px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            canvas {
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👨‍💻 Phattharacharin Khamsitha</h1>
+            <p>Computer Science Student | Graphics Programmer</p>
+        </div>
+
+        <div class="content">
+            <!-- CV Section -->
+            <div class="cv-section">
+                <h2>📋 ข้อมูลส่วนตัว</h2>
+                <div class="info-box">
+                    <p><strong>ชื่อ:</strong> Phattharacharin Khamsitha</p>
+                    <p><strong>อายุ:</strong> 22 ปี (เกิด 14 ธันวาคม 2004)</p>
+                    <p><strong>Email:</strong> phattharacharin.k@ku.th</p>
+                    <p><strong>โทรศัพท์:</strong> 0616041471</p>
+                </div>
+
+                <h2>🎓 การศึกษา</h2>
+                <h3>ปริญญาตรี วิทยาการคอมพิวเตอร์</h3>
+                <p>มหาวิทยาลัยเกษตรสาสตร์ วิทยาเขตแพงแสน</p>
+                <p style="color: #666; font-size: 0.95em;">สถาบันการศึกษาชั้นนำด้านวิทยาการคอมพิวเตอร์ที่มีความเชี่ยวชาญในงานวิทยาศาสตร์ข้อมูลและกราฟิกส์คอมพิวเตอร์</p>
+
+                <h2>💻 ทักษะ</h2>
+                <ul>
+                    <li><strong>ภาษาการเขียนโปรแกรม:</strong></li>
+                </ul>
+                <div class="info-box">
+                    <p>✓ C++ - ระดับสูง</p>
+                    <p>✓ JavaScript - ระดับสูง</p>
+                    <p>✓ Java - ระดับกลาง</p>
+                </div>
+
+                <ul>
+                    <li><strong>ทักษะด้านกราฟิกส์:</strong></li>
+                </ul>
+                <div class="info-box">
+                    <p>✓ Raster Graphics (Pixel-based)</p>
+                    <p>✓ 2D Graphics Transformation (Translate, Rotate, Scale)</p>
+                    <p>✓ Canvas API & WebGL</p>
+                    <p>✓ Sprite Animation & 24-bit Color</p>
+                    <p>✓ Backward Mapping Algorithm</p>
+                </div>
+
+                <ul>
+                    <li><strong>อื่น ๆ:</strong></li>
+                </ul>
+                <div class="info-box">
+                    <p>✓ Web Development (HTML, CSS, JavaScript)</p>
+                    <p>✓ Git & GitHub</p>
+                    <p>✓ Computer Graphics Theory</p>
+                </div>
+            </div>
+
+            <!-- Interactive Graphics Section -->
+            <div class="graphics-section">
+                <h2>🎨 Interactive Graphics</h2>
+                <canvas id="canvas" width="200" height="200"></canvas>
+
+                <div class="controls">
+                    <p><strong>⌨️ การควบคุม:</strong></p>
+                    <p>
+                        <span class="key">↑</span> /
+                        <span class="key">↓</span> = ขยาย/ย่อ
+                    </p>
+                    <p>
+                        <span class="key">←</span> /
+                        <span class="key">→</span> = หมุน
+                    </p>
+                    <p>
+                        <span class="key">W</span> /
+                        <span class="key">S</span> = เลื่อนขึ้น/ลง
+                    </p>
+                    <p>
+                        <span class="key">A</span> /
+                        <span class="key">D</span> = เลื่อนซ้าย/ขวา
+                    </p>
+                    <p style="margin-top: 10px; font-size: 0.85em; color: #666;">
+                        💡 Sprite 24-bit ที่สามารถควบคุมด้วย Keyboard<br>
+                        ลองกดปุ่มต่าง ๆ เพื่อเห็นการเปลี่ยนแปลง!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 Phattharacharin Khamsitha | GitHub Pages for Computer Graphics</p>
+        </footer>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const imageData = ctx.createImageData(canvas.width, canvas.height);
+        const pixels = imageData.data;
+
+        // ตัวแปรควบคุม Transform
+        let posX = canvas.width / 2;
+        let posY = canvas.height / 2;
+        let rotation = 0;
+        let scale = 3.0;
+
+        // ตัวแปรเก็บสถานะปุ่ม
+        const keys = {};
+
+        function putPixel(x, y, r, g, b, a = 255) {
+            if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
+            const idx = (y * canvas.width + x) * 4;
+            pixels[idx] = r;
+            pixels[idx + 1] = g;
+            pixels[idx + 2] = b;
+            pixels[idx + 3] = a;
+        }
+
+        function drawRectFilled(x1, y1, x2, y2, r, g, b, a = 255) {
+            for (let y = y1; y <= y2; y++) {
+                for (let x = x1; x <= x2; x++) {
+                    putPixel(x, y, r, g, b, a);
+                }
+            }
+        }
+
+        // Sprite 24-bit สีสันสวย ✓
+        const smileySprite = [
+            [null, null, 0xFF6B6B, 0xFF6B6B, 0xFF6B6B, 0xFF6B6B, null, null],
+            [null, 0xFF6B6B, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFF6B6B, null],
+            [0xFF6B6B, 0xFFE66D, 0x000000, 0xFFE66D, 0xFFE66D, 0x000000, 0xFFE66D, 0xFF6B6B],
+            [0xFF6B6B, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFF6B6B],
+            [0xFF6B6B, 0xFFE66D, 0x000000, 0x000000, 0x000000, 0x000000, 0xFFE66D, 0xFF6B6B],
+            [0xFF6B6B, 0xFFE66D, 0xFFE66D, 0x000000, 0x000000, 0xFFE66D, 0xFFE66D, 0xFF6B6B],
+            [null, 0xFF6B6B, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFF6B6B, null],
+            [null, null, 0xFF6B6B, 0xFF6B6B, 0xFF6B6B, 0xFF6B6B, null, null],
+        ];
+
+        // ฟังก์ชัน Backward Mapping สำหรับ Transform ที่คมชัด
+        function drawSprite24BitPerfect(sprite, cx, cy, degree, scale) {
+            if (scale <= 0.5) return;
+
+            const rad = -degree * Math.PI / 180;
+            const cos = Math.cos(rad);
+            const sin = Math.sin(rad);
+
+            const spriteW = sprite[0].length;
+            const spriteH = sprite.length;
+
+            const maxDim = Math.max(spriteW, spriteH);
+            const boundingSize = Math.ceil(maxDim * scale * 2);
+
+            for (let screenY = cy - boundingSize; screenY <= cy + boundingSize; screenY++) {
+                for (let screenX = cx - boundingSize; screenX <= cx + boundingSize; screenX++) {
+                    const dx = screenX - cx;
+                    const dy = screenY - cy;
+
+                    const rotX = dx * cos - dy * sin;
+                    const rotY = dx * sin + dy * cos;
+
+                    const spriteX = Math.floor(rotX / scale + spriteW / 2);
+                    const spriteY = Math.floor(rotY / scale + spriteH / 2);
+
+                    if (spriteY >= 0 && spriteY < spriteH && spriteX >= 0 && spriteX < spriteW) {
+                        const color = sprite[spriteY][spriteX];
+                        if (color !== null) {
+                            const r = (color >> 16) & 255;
+                            const g = (color >> 8) & 255;
+                            const b = color & 255;
+                            putPixel(screenX, screenY, r, g, b);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Event Listeners สำหรับ Keyboard
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+
+        function update() {
+            // Scale (↑/↓)
+            if (keys['ArrowUp']) scale += 0.2;
+            if (keys['ArrowDown']) scale -= 0.2;
+            scale = Math.max(0.5, scale);
+
+            // Rotation (←/→)
+            if (keys['ArrowLeft']) rotation -= 5;
+            if (keys['ArrowRight']) rotation += 5;
+
+            // Position (W/A/S/D)
+            if (keys['w'] || keys['W']) posY -= 2;
+            if (keys['s'] || keys['S']) posY += 2;
+            if (keys['a'] || keys['A']) posX -= 2;
+            if (keys['d'] || keys['D']) posX += 2;
+
+            // ตรวจสอบ Bounds
+            posX = Math.max(10, Math.min(canvas.width - 10, posX));
+            posY = Math.max(10, Math.min(canvas.height - 10, posY));
+        }
+
+        function animate() {
+            // ล้างหน้าจอ
+            drawRectFilled(0, 0, canvas.width - 1, canvas.height - 1, 230, 230, 250);
+
+            // Update ตำแหน่งและ Transform
+            update();
+
+            // วาด Sprite
+            drawSprite24BitPerfect(smileySprite, posX, posY, rotation, scale);
+
+            // อัปเดต Canvas
+            ctx.putImageData(imageData, 0, 0);
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
