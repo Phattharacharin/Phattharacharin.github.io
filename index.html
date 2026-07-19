@@ -257,28 +257,28 @@
         const lineBuffer = new Uint8ClampedArray(canvas.width * canvas.height * 4);
 
         // Palette 24-bit RGB
-        const _ = null;
-        const K = [0, 0, 0];
-        const W = [255, 255, 255];
-        const R = [235, 50, 35];
-        const Y = [255, 206, 0];
-        const G = [70, 200, 80];
-        const B = [40, 130, 240];
-        const P = [255, 160, 200];
+        // 1. กำหนด Palette สีใหม่
+const _ = null;
+const K = [15, 23, 42];        // ดำขอบ
+const W = [255, 255, 255];     // ขาว
+const G = [203, 213, 225];     // เทาปุ่ม
+const B = [37, 99, 235];       // ฟ้า/น้ำเงิน (Blue)
+const O = [249, 115, 22];      // ส้ม (Orange - แถบข้าง)
 
-        // 24-Bit Sprite Matrix (RGB Pixel Art)
-        const sprite24Bit = [
-            [_, _, R, R, R, R, R, R, _, _],
-            [_, R, R, R, R, R, R, R, R, _],
-            [_, R, W, K, R, R, W, K, R, _],
-            [_, R, W, W, R, R, W, W, R, _],
-            [R, R, R, R, P, P, R, R, R, R],
-            [R, R, R, Y, Y, Y, Y, R, R, R],
-            [_, R, G, G, B, B, G, G, R, _],
-            [_, _, G, G, G, G, G, G, _, _],
-            [_, G, G, _, _, _, _, G, G, _],
-            [G, G, G, _, _, _, _, G, G, G]
-        ];
+// 2. เอาตัวอักษร B และ O มาจัดวางในตาราง
+const sprite24Bit = [
+    [_, _, K, K, K, K, K, K, _, _],
+    [_, K, B, B, B, B, B, B, K, _],
+    [K, O, B, B, B, B, B, B, O, K], // ใส่แถบส้มด้านข้าง O
+    [K, O, O, B, B, B, B, O, O, K],
+    [K, K, K, K, G, G, K, K, K, K],
+    [K, K, K, K, W, W, K, K, K, K],
+    [K, W, W, W, W, W, W, W, W, K],
+    [K, W, W, W, W, W, W, W, W, K],
+    [_, K, W, W, W, W, W, W, K, _],
+    [_, _, K, K, K, K, K, K, _, _]
+];
+          
 
         let posX = canvas.width / 2;
         let posY = canvas.height / 2;
