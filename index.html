@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phattharacharin - CV & Interactive Graphics</title>
+    <title>Phattharacharin - CV & Raster Graphics</title>
     <style>
         * {
             margin: 0;
@@ -112,11 +112,12 @@
         canvas {
             border: 2px solid #667eea;
             border-radius: 10px;
-            background: white;
+            background: black;
             image-rendering: pixelated;
             margin-bottom: 15px;
-            width: 300px;
-            height: 300px;
+            width: 400px;
+            height: 400px;
+            cursor: crosshair;
         }
 
         .controls {
@@ -127,6 +128,8 @@
             width: 100%;
             text-align: center;
             color: #333;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
         .controls p {
@@ -141,6 +144,18 @@
             font-weight: bold;
             display: inline-block;
             margin: 0 3px;
+            font-size: 0.9em;
+        }
+
+        .algorithm-info {
+            background: #fffacd;
+            border-left: 4px solid #ffa500;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            color: #333;
+            text-align: left;
         }
 
         @media (max-width: 768px) {
@@ -171,7 +186,7 @@
     <div class="container">
         <div class="header">
             <h1>👨‍💻 Phattharacharin Khamsitha</h1>
-            <p>Computer Science Student | Graphics Programmer</p>
+            <p>Computer Science Student | Raster Graphics</p>
         </div>
 
         <div class="content">
@@ -188,90 +203,120 @@
                 <h2>🎓 การศึกษา</h2>
                 <h3>ปริญญาตรี วิทยาการคอมพิวเตอร์</h3>
                 <p>มหาวิทยาลัยเกษตรสาสตร์ วิทยาเขตแพงแสน</p>
-                <p style="color: #666; font-size: 0.95em;">สถาบันการศึกษาชั้นนำด้านวิทยาการคอมพิวเตอร์ที่มีความเชี่ยวชาญในงานวิทยาศาสตร์ข้อมูลและกราฟิกส์คอมพิวเตอร์</p>
 
-                <h2>💻 ทักษะ</h2>
-                <ul>
-                    <li><strong>ภาษาการเขียนโปรแกรม:</strong></li>
-                </ul>
+                <h2>💻 ทักษะ Raster Graphics</h2>
                 <div class="info-box">
+                    <p><strong>ฟังก์ชัน Raster Graphics:</strong></p>
+                    <p>✓ putPixel() - วาดพิกเซลทีละตัว</p>
+                    <p>✓ drawLine() - วาดเส้นตรง</p>
+                    <p>✓ drawRect() - วาดสี่เหลี่ยมกรอบ</p>
+                    <p>✓ drawRectFilled() - วาดสี่เหลี่ยมเต็ม</p>
+                    <p>✓ drawEllipse() - วาดวงรี</p>
+                    <p>✓ drawRectGradient() - Gradient สี</p>
+                    <p>✓ drawSprite() - วาด Sprite</p>
+                </div>
+
+                <div class="info-box">
+                    <p><strong>ภาษาการเขียนโปรแกรม:</strong></p>
                     <p>✓ C++ - ระดับสูง</p>
                     <p>✓ JavaScript - ระดับสูง</p>
                     <p>✓ Java - ระดับกลาง</p>
                 </div>
 
-                <ul>
-                    <li><strong>ทักษะด้านกราฟิกส์:</strong></li>
-                </ul>
                 <div class="info-box">
-                    <p>✓ Raster Graphics (Pixel-based)</p>
-                    <p>✓ 2D Graphics Transformation (Translate, Rotate, Scale)</p>
-                    <p>✓ Canvas API & WebGL</p>
-                    <p>✓ Sprite Animation & 24-bit Color</p>
-                    <p>✓ Backward Mapping Algorithm</p>
-                </div>
-
-                <ul>
-                    <li><strong>อื่น ๆ:</strong></li>
-                </ul>
-                <div class="info-box">
-                    <p>✓ Web Development (HTML, CSS, JavaScript)</p>
-                    <p>✓ Git & GitHub</p>
-                    <p>✓ Computer Graphics Theory</p>
+                    <p><strong>Transform Algorithm:</strong></p>
+                    <p>✓ Translate (เลื่อน)</p>
+                    <p>✓ Rotate (หมุน) - คำนวณเอง</p>
+                    <p>✓ Scale (ขยาย/ย่อ) - คำนวณเอง</p>
+                    <p>✓ Backward Mapping</p>
                 </div>
             </div>
 
             <!-- Interactive Graphics Section -->
             <div class="graphics-section">
-                <h2>🎨 Interactive Graphics</h2>
+                <h2>🎨 Raster Graphics Demo</h2>
                 <canvas id="canvas" width="200" height="200"></canvas>
 
                 <div class="controls">
-                    <p><strong>⌨️ การควบคุม:</strong></p>
+                    <p><strong>⌨️ Keyboard Control:</strong></p>
                     <p>
-                        <span class="key">↑</span> /
-                        <span class="key">↓</span> = ขยาย/ย่อ
+                        <span class="key">1</span> = สีแดง |
+                        <span class="key">2</span> = สีเขียว |
+                        <span class="key">3</span> = สีน้ำเงิน
                     </p>
-                    <p>
-                        <span class="key">←</span> /
-                        <span class="key">→</span> = หมุน
-                    </p>
-                    <p>
-                        <span class="key">W</span> /
-                        <span class="key">S</span> = เลื่อนขึ้น/ลง
+                    <p style="margin-top: 10px;">
+                        <span class="key">↑</span> / <span class="key">↓</span> = ขยาย/ย่อ Sprite
                     </p>
                     <p>
-                        <span class="key">A</span> /
-                        <span class="key">D</span> = เลื่อนซ้าย/ขวา
+                        <span class="key">←</span> / <span class="key">→</span> = หมุน Sprite
                     </p>
-                    <p style="margin-top: 10px; font-size: 0.85em; color: #666;">
-                        💡 Sprite 24-bit ที่สามารถควบคุมด้วย Keyboard<br>
-                        ลองกดปุ่มต่าง ๆ เพื่อเห็นการเปลี่ยนแปลง!
+                    <p>
+                        <span class="key">W</span> / <span class="key">S</span> = เลื่อน Sprite ขึ้น/ลง
                     </p>
+                    <p>
+                        <span class="key">A</span> / <span class="key">D</span> = เลื่อน Sprite ซ้าย/ขวา
+                    </p>
+
+                    <p style="margin-top: 10px; font-style: italic; color: #666;">
+                        🖱️ ลากเมาส์เพื่อวาดเส้น
+                    </p>
+
+                    <div class="algorithm-info">
+                        <strong>🔧 Algorithms Used:</strong><br>
+                        • putPixel() - Pixel-by-pixel rendering<br>
+                        • drawLine() - Line drawing algorithm<br>
+                        • drawSprite() - Sprite rasterization<br>
+                        • Backward Mapping - Transform calculation<br>
+                        • Rotation/Scale Matrix - Math computation
+                    </div>
                 </div>
             </div>
         </div>
 
         <footer>
-            <p>© 2026 Phattharacharin Khamsitha | GitHub Pages for Computer Graphics</p>
+            <p>© 2026 Phattharacharin Khamsitha | Raster Graphics Project</p>
         </footer>
     </div>
 
     <script>
+        // ========================================
+        // Canvas & ImageData Setup
+        // ========================================
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const imageData = ctx.createImageData(canvas.width, canvas.height);
         const pixels = imageData.data;
 
-        // ตัวแปรควบคุม Transform
+        // ========================================
+        // Sprite Definition (Space Invader)
+        // ========================================
+        const spaceInvaderSprite = [
+            [0, 0, 1, 0, 0, 1, 0, 0],
+            [0, 0, 0, 1, 1, 0, 0, 0],
+            [0, 0, 1, 1, 1, 1, 0, 0],
+            [0, 1, 1, 1, 1, 1, 1, 0],
+            [1, 1, 0, 1, 1, 0, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 1, 0, 0, 1, 0, 1],
+            [0, 1, 0, 1, 1, 0, 1, 0],
+        ];
+
+        // ========================================
+        // Control Variables
+        // ========================================
         let posX = canvas.width / 2;
         let posY = canvas.height / 2;
         let rotation = 0;
-        let scale = 3.0;
-
-        // ตัวแปรเก็บสถานะปุ่ม
+        let scale = 1.0;
+        let drawColor = { r: 0, g: 255, b: 0 };
+        let dragging = false;
+        let previousX = 0;
+        let previousY = 0;
         const keys = {};
 
+        // ========================================
+        // 1. putPixel - Write single pixel
+        // ========================================
         function putPixel(x, y, r, g, b, a = 255) {
             if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
             const idx = (y * canvas.width + x) * 4;
@@ -281,6 +326,55 @@
             pixels[idx + 3] = a;
         }
 
+        // ========================================
+        // 2. fillBackground - Clear screen
+        // ========================================
+        function fillBackground(r, g, b) {
+            for (let i = 0; i < pixels.length; i += 4) {
+                pixels[i] = r;
+                pixels[i + 1] = g;
+                pixels[i + 2] = b;
+                pixels[i + 3] = 255;
+            }
+        }
+
+        // ========================================
+        // 3. drawLine - Line drawing algorithm
+        // ========================================
+        function drawLine(x1, y1, x2, y2, r, g, b, a = 255) {
+            const dx = Math.abs(x2 - x1);
+            const dy = Math.abs(y2 - y1);
+
+            if (dx > dy) {
+                const m = (y2 - y1) / (x2 - x1);
+                const c = y1 - m * x1;
+                for (let x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
+                    const y = Math.round(m * x + c);
+                    putPixel(x, y, r, g, b, a);
+                }
+            } else {
+                const m = (x2 - x1) / (y2 - y1);
+                const c = x1 - m * y1;
+                for (let y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
+                    const x = Math.round(m * y + c);
+                    putPixel(x, y, r, g, b, a);
+                }
+            }
+        }
+
+        // ========================================
+        // 4. drawRect - Rectangle outline
+        // ========================================
+        function drawRect(x1, y1, x2, y2, r, g, b, a = 255) {
+            drawLine(x1, y1, x2, y1, r, g, b, a);
+            drawLine(x2, y1, x2, y2, r, g, b, a);
+            drawLine(x2, y2, x1, y2, r, g, b, a);
+            drawLine(x1, y2, x1, y1, r, g, b, a);
+        }
+
+        // ========================================
+        // 5. drawRectFilled - Filled rectangle
+        // ========================================
         function drawRectFilled(x1, y1, x2, y2, r, g, b, a = 255) {
             for (let y = y1; y <= y2; y++) {
                 for (let x = x1; x <= x2; x++) {
@@ -289,49 +383,76 @@
             }
         }
 
-        // Sprite 24-bit สีสันสวย ✓
-        const smileySprite = [
-            [null, null, 0xFF6B6B, 0xFF6B6B, 0xFF6B6B, 0xFF6B6B, null, null],
-            [null, 0xFF6B6B, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFF6B6B, null],
-            [0xFF6B6B, 0xFFE66D, 0x000000, 0xFFE66D, 0xFFE66D, 0x000000, 0xFFE66D, 0xFF6B6B],
-            [0xFF6B6B, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFF6B6B],
-            [0xFF6B6B, 0xFFE66D, 0x000000, 0x000000, 0x000000, 0x000000, 0xFFE66D, 0xFF6B6B],
-            [0xFF6B6B, 0xFFE66D, 0xFFE66D, 0x000000, 0x000000, 0xFFE66D, 0xFFE66D, 0xFF6B6B],
-            [null, 0xFF6B6B, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFFE66D, 0xFF6B6B, null],
-            [null, null, 0xFF6B6B, 0xFF6B6B, 0xFF6B6B, 0xFF6B6B, null, null],
-        ];
+        // ========================================
+        // 6. drawEllipse - Ellipse drawing
+        // ========================================
+        function drawEllipse(cx, cy, rx, ry, r, g, b, a = 255) {
+            for (let y = -ry; y <= ry; y++) {
+                for (let x = -rx; x <= rx; x++) {
+                    if ((x * x) / (rx * rx) + (y * y) / (ry * ry) <= 1) {
+                        putPixel(cx + x, cy + y, r, g, b, a);
+                    }
+                }
+            }
+        }
 
-        // ฟังก์ชัน Backward Mapping สำหรับ Transform ที่คมชัด
-        function drawSprite24BitPerfect(sprite, cx, cy, degree, scale) {
-            if (scale <= 0.5) return;
+        // ========================================
+        // 7. drawRectGradient - Gradient fill
+        // ========================================
+        function drawRectGradient(x1, y1, x2, y2, r1, g1, b1, r2, g2, b2) {
+            for (let y = y1; y <= y2; y++) {
+                const t = (y - y1) / (y2 - y1);
+                const r = Math.round(r1 * (1 - t) + r2 * t);
+                const g = Math.round(g1 * (1 - t) + g2 * t);
+                const b = Math.round(b1 * (1 - t) + b2 * t);
+                for (let x = x1; x <= x2; x++) {
+                    putPixel(x, y, r, g, b);
+                }
+            }
+        }
+
+        // ========================================
+        // 8. drawSprite - Sprite rendering
+        // ========================================
+        function drawSprite(sprite, x, y, r, g, b, a = 255) {
+            for (let j = 0; j < sprite.length; j++) {
+                for (let i = 0; i < sprite[j].length; i++) {
+                    if (sprite[j][i] === 1) {
+                        putPixel(x + i, y + j, r, g, b, a);
+                    }
+                }
+            }
+        }
+
+        // ========================================
+        // 9. Backward Mapping for Transform
+        // ========================================
+        function drawSpriteWithTransform(sprite, centerX, centerY, degree, scaleVal, r, g, b) {
+            if (scaleVal <= 0.1) return;
+
+            const spriteW = sprite[0].length;
+            const spriteH = sprite.length;
 
             const rad = -degree * Math.PI / 180;
             const cos = Math.cos(rad);
             const sin = Math.sin(rad);
 
-            const spriteW = sprite[0].length;
-            const spriteH = sprite.length;
-
             const maxDim = Math.max(spriteW, spriteH);
-            const boundingSize = Math.ceil(maxDim * scale * 2);
+            const boundingRadius = Math.ceil(maxDim * scaleVal * 1.5);
 
-            for (let screenY = cy - boundingSize; screenY <= cy + boundingSize; screenY++) {
-                for (let screenX = cx - boundingSize; screenX <= cx + boundingSize; screenX++) {
-                    const dx = screenX - cx;
-                    const dy = screenY - cy;
+            for (let screenY = centerY - boundingRadius; screenY <= centerY + boundingRadius; screenY++) {
+                for (let screenX = centerX - boundingRadius; screenX <= centerX + boundingRadius; screenX++) {
+                    const dx = screenX - centerX;
+                    const dy = screenY - centerY;
 
                     const rotX = dx * cos - dy * sin;
                     const rotY = dx * sin + dy * cos;
 
-                    const spriteX = Math.floor(rotX / scale + spriteW / 2);
-                    const spriteY = Math.floor(rotY / scale + spriteH / 2);
+                    const spriteX = Math.floor(rotX / scaleVal + spriteW / 2);
+                    const spriteY = Math.floor(rotY / scaleVal + spriteH / 2);
 
                     if (spriteY >= 0 && spriteY < spriteH && spriteX >= 0 && spriteX < spriteW) {
-                        const color = sprite[spriteY][spriteX];
-                        if (color !== null) {
-                            const r = (color >> 16) & 255;
-                            const g = (color >> 8) & 255;
-                            const b = color & 255;
+                        if (sprite[spriteY][spriteX] === 1) {
                             putPixel(screenX, screenY, r, g, b);
                         }
                     }
@@ -339,49 +460,100 @@
             }
         }
 
-        // Event Listeners สำหรับ Keyboard
+        // ========================================
+        // 10. getMousePos - Get canvas coordinates
+        // ========================================
+        function getMousePos(canvas, event) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            return {
+                x: Math.floor((event.clientX - rect.left) * scaleX),
+                y: Math.floor((event.clientY - rect.top) * scaleY)
+            };
+        }
+
+        // ========================================
+        // 11. Event Listeners
+        // ========================================
         document.addEventListener('keydown', (e) => {
             keys[e.key] = true;
+
+            if (e.key === '1') {
+                drawColor = { r: 255, g: 0, b: 0 };
+            } else if (e.key === '2') {
+                drawColor = { r: 0, g: 255, b: 0 };
+            } else if (e.key === '3') {
+                drawColor = { r: 0, g: 0, b: 255 };
+            }
         });
 
         document.addEventListener('keyup', (e) => {
             keys[e.key] = false;
         });
 
-        function update() {
-            // Scale (↑/↓)
-            if (keys['ArrowUp']) scale += 0.2;
-            if (keys['ArrowDown']) scale -= 0.2;
-            scale = Math.max(0.5, scale);
+        canvas.addEventListener('mousedown', (event) => {
+            dragging = true;
+            const { x, y } = getMousePos(canvas, event);
+            previousX = x;
+            previousY = y;
+        });
 
-            // Rotation (←/→)
+        canvas.addEventListener('mouseup', () => {
+            dragging = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            dragging = false;
+        });
+
+        canvas.addEventListener('mousemove', (event) => {
+            const { x, y } = getMousePos(canvas, event);
+            if (dragging) {
+                drawLine(previousX, previousY, x, y, drawColor.r, drawColor.g, drawColor.b);
+                ctx.putImageData(imageData, 0, 0);
+                previousX = x;
+                previousY = y;
+            }
+        });
+
+        // ========================================
+        // 12. Update Transform
+        // ========================================
+        function update() {
+            if (keys['ArrowUp']) scale += 0.1;
+            if (keys['ArrowDown']) scale -= 0.1;
+            scale = Math.max(0.3, scale);
+
             if (keys['ArrowLeft']) rotation -= 5;
             if (keys['ArrowRight']) rotation += 5;
 
-            // Position (W/A/S/D)
             if (keys['w'] || keys['W']) posY -= 2;
             if (keys['s'] || keys['S']) posY += 2;
             if (keys['a'] || keys['A']) posX -= 2;
             if (keys['d'] || keys['D']) posX += 2;
 
-            // ตรวจสอบ Bounds
-            posX = Math.max(10, Math.min(canvas.width - 10, posX));
-            posY = Math.max(10, Math.min(canvas.height - 10, posY));
+            posX = Math.max(20, Math.min(canvas.width - 20, posX));
+            posY = Math.max(20, Math.min(canvas.height - 20, posY));
         }
 
+        // ========================================
+        // 13. Animation Loop
+        // ========================================
         function animate() {
-            // ล้างหน้าจอ
-            drawRectFilled(0, 0, canvas.width - 1, canvas.height - 1, 230, 230, 250);
+            fillBackground(0, 0, 0);
 
-            // Update ตำแหน่งและ Transform
+            // Draw sample shapes
+            drawLine(10, 10, 190, 10, 255, 0, 0);
+            drawRect(20, 30, 80, 60, 0, 255, 0);
+            drawRectFilled(100, 30, 150, 60, 0, 0, 255);
+            drawRectGradient(160, 30, 190, 60, 255, 0, 0, 0, 255, 0);
+            drawEllipse(50, 120, 20, 15, 255, 255, 0);
+
             update();
+            drawSpriteWithTransform(spaceInvaderSprite, posX, posY, rotation, scale, 0, 255, 0);
 
-            // วาด Sprite
-            drawSprite24BitPerfect(smileySprite, posX, posY, rotation, scale);
-
-            // อัปเดต Canvas
             ctx.putImageData(imageData, 0, 0);
-
             requestAnimationFrame(animate);
         }
 
