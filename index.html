@@ -1,167 +1,458 @@
-@import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phattharacharin - CV & Interactive Computer Graphics</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body {
-    font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #f1f5f9; /* สีเทาฟ้าอ่อน สบายตา */
-    color: #334155;
-    line-height: 1.6;
-    padding: 40px 15px;
-}
+        body {
+            font-family: 'Prompt', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f1f5f9;
+            color: #334155;
+            line-height: 1.6;
+            padding: 40px 15px;
+        }
 
-.container {
-    max-width: 1100px;
-    margin: 0 auto;
-    background: #ffffff;
-    border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-}
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 25px -5px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
 
-/* Header เรียบสะอาดตา */
-.header {
-    background: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
-    padding: 45px 20px;
-    text-align: center;
-}
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 45px 20px;
+            text-align: center;
+        }
 
-.header h1 {
-    font-size: 2.1rem;
-    font-weight: 600;
-    color: #0f172a;
-    letter-spacing: -0.5px;
-}
+        .header h1 {
+            font-size: 2.1rem;
+            font-weight: 600;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
 
-.header p {
-    font-size: 0.98rem;
-    color: #64748b;
-    margin-top: 6px;
-    font-weight: 300;
-}
+        .header p {
+            font-size: 0.98rem;
+            color: #64748b;
+            margin-top: 6px;
+            font-weight: 300;
+        }
 
-/* Layout Content */
-.content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 36px;
-    padding: 40px;
-}
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 36px;
+            padding: 40px;
+        }
 
-.cv-section h2, .graphics-section h2 {
-    color: #0f172a;
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid #2563eb; /* เส้นเน้นสีน้ำเงินเรียบๆ */
-    display: inline-block;
-}
+        .cv-section h2, .graphics-section h2 {
+            color: #0f172a;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #2563eb;
+            display: inline-block;
+        }
 
-.cv-section h3 {
-    color: #1e293b;
-    font-size: 1rem;
-    font-weight: 500;
-    margin-top: 12px;
-    margin-bottom: 4px;
-}
+        .info-box {
+            background: #f8fafc;
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
 
-.info-box {
-    background: #f8fafc;
-    padding: 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    margin-bottom: 16px;
-}
+        .info-box p {
+            color: #475569;
+            font-size: 0.92rem;
+            margin-bottom: 6px;
+        }
 
-.info-box p {
-    color: #475569;
-    font-size: 0.92rem;
-    margin-bottom: 6px;
-}
+        .info-box strong {
+            color: #0f172a;
+        }
 
-.info-box strong {
-    color: #0f172a;
-}
+        .graphics-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-/* Graphics Section */
-.graphics-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+        canvas {
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            background: #090d16;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            width: 400px;
+            height: 400px;
+            cursor: crosshair;
+        }
 
-canvas {
-    border: 1px solid #cbd5e1;
-    border-radius: 12px;
-    background: #090d16; /* Canvas ดำเข้มเพื่อให้ Sprite โดดเด่น */
-    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
-    width: 400px;
-    height: 400px;
-}
+        .controls {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 18px;
+            border-radius: 10px;
+            color: #475569;
+            font-size: 0.88rem;
+            width: 100%;
+            text-align: center;
+        }
 
-.controls {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    padding: 18px;
-    border-radius: 10px;
-    color: #475569;
-    font-size: 0.88rem;
-    width: 100%;
-    text-align: center;
-}
+        .controls p {
+            margin: 6px 0;
+        }
 
-.controls p {
-    margin: 6px 0;
-}
+        .key {
+            background: #e2e8f0;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-family: monospace;
+            font-size: 0.85em;
+        }
 
-.key {
-    background: #e2e8f0;
-    color: #0f172a;
-    border: 1px solid #cbd5e1;
-    padding: 2px 7px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-family: monospace;
-    font-size: 0.85em;
-}
+        .algorithm-info {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e3a8a;
+            padding: 12px 15px;
+            margin-top: 14px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            text-align: left;
+            line-height: 1.5;
+        }
 
-.algorithm-info {
-    background: #eff6ff; /* กล่องฟ้าอ่อนสบายตา */
-    border: 1px solid #bfdbfe;
-    color: #1e3a8a;
-    padding: 12px 15px;
-    margin-top: 14px;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    text-align: left;
-    line-height: 1.5;
-}
+        footer {
+            background: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            padding: 20px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
 
-footer {
-    background: #ffffff;
-    border-top: 1px solid #e2e8f0;
-    padding: 20px;
-    text-align: center;
-    color: #94a3b8;
-    font-size: 0.85rem;
-}
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+            
+            canvas {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Phattharacharin Khamsitha</h1>
+            <p>Computer Science Student | Kasetsart University Kamphaeng Saen</p>
+        </div>
 
-@media (max-width: 768px) {
-    .content {
-        grid-template-columns: 1fr;
-        padding: 20px;
-    }
-    
-    canvas {
-        width: 100%;
-        height: auto;
-    }
-}
+        <div class="content">
+            <!-- CV Section -->
+            <div class="cv-section">
+                <h2>ข้อมูลส่วนตัว</h2>
+                <div class="info-box">
+                    <p><strong>ชื่อ-นามสกุล:</strong> ภัทรชรินทร์ คำสีทา</p>
+                    <p><strong>อายุ:</strong> 22 ปี (เกิด 14 ธันวาคม 2004)</p>
+                    <p><strong>Email:</strong> phattharacharin.k@ku.th</p>
+                    <p><strong>โทรศัพท์:</strong> 0616041471</p>
+                </div>
+
+                <h2>การศึกษา</h2>
+                <div class="info-box">
+                    <p><strong>ปริญญาตรี:</strong> วิทยาการคอมพิวเตอร์</p>
+                    <p>มหาวิทยาลัยเกษตรศาสตร์ วิทยาเขตกำแพงแสน</p>
+                </div>
+
+                <h2>ทักษะและอัลกอริทึมที่ใช้</h2>
+                <div class="info-box">
+                    <p><strong>Raster Graphics Functions:</strong></p>
+                    <p>• putPixel() - วาดพิกเซลทีละจุด</p>
+                    <p>• drawLine() - วาดเส้นตรงด้วยอัลกอริทึม</p>
+                    <p>• drawSprite24Bit() - วาด Sprite สี 24-bit (RGB)</p>
+                </div>
+
+                <div class="info-box">
+                    <p><strong>2D Transformation Algorithms:</strong></p>
+                    <p>• Translation (การเลื่อนตำแหน่ง)</p>
+                    <p>• Rotation Matrix (การหมุนวัตถุ)</p>
+                    <p>• Scaling (การย่อ/ขยายขนาด)</p>
+                    <p>• Backward Mapping Algorithm</p>
+                </div>
+            </div>
+
+            <!-- Interactive Graphics Section -->
+            <div class="graphics-section">
+                <h2>Interactive Computer Graphics</h2>
+                <canvas id="canvas" width="200" height="200"></canvas>
+
+                <div class="controls">
+                    <p><strong>Keyboard Control</strong></p>
+                    <p>
+                        <span class="key">1</span> ปากกาแดง | 
+                        <span class="key">2</span> ปากกาเขียว | 
+                        <span class="key">3</span> ปากกาน้ำเงิน
+                    </p>
+                    <p style="margin-top: 8px;">
+                        <span class="key">↑</span> / <span class="key">↓</span> : ขยาย / ย่อ Sprite (Scale)
+                    </p>
+                    <p>
+                        <span class="key">←</span> / <span class="key">→</span> : หมุน Sprite (Rotate)
+                    </p>
+                    <p>
+                        <span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span class="key">D</span> : เลื่อนตำแหน่ง Sprite (Translate)
+                    </p>
+
+                    <p style="margin-top: 10px; color: #64748b; font-size: 0.85em;">
+                        ลากเมาส์บน Canvas เพื่อวาดเส้น
+                    </p>
+
+                    <div class="algorithm-info">
+                        <strong>Algorithms Implementation:</strong><br>
+                        • 24-Bit RGB Pixel Matrix<br>
+                        • Custom putPixel & Line Rasterization<br>
+                        • Backward Mapping Transformation<br>
+                        • Keyboard State Handling & Canvas Buffer
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 Phattharacharin Khamsitha | Computer Graphics Project</p>
+        </footer>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const imageData = ctx.createImageData(canvas.width, canvas.height);
+        const pixels = imageData.data;
+
+        // Buffer สำหรับเก็บเส้นที่วาดด้วยเมาส์
+        const lineBuffer = new Uint8ClampedArray(canvas.width * canvas.height * 4);
+
+        // Palette 24-bit RGB
+        const _ = null;
+        const K = [0, 0, 0];
+        const W = [255, 255, 255];
+        const R = [235, 50, 35];
+        const Y = [255, 206, 0];
+        const G = [70, 200, 80];
+        const B = [40, 130, 240];
+        const P = [255, 160, 200];
+
+        // 24-Bit Sprite Matrix (RGB Pixel Art)
+        const sprite24Bit = [
+            [_, _, R, R, R, R, R, R, _, _],
+            [_, R, R, R, R, R, R, R, R, _],
+            [_, R, W, K, R, R, W, K, R, _],
+            [_, R, W, W, R, R, W, W, R, _],
+            [R, R, R, R, P, P, R, R, R, R],
+            [R, R, R, Y, Y, Y, Y, R, R, R],
+            [_, R, G, G, B, B, G, G, R, _],
+            [_, _, G, G, G, G, G, G, _, _],
+            [_, G, G, _, _, _, _, G, G, _],
+            [G, G, G, _, _, _, _, G, G, G]
+        ];
+
+        let posX = canvas.width / 2;
+        let posY = canvas.height / 2;
+        let rotation = 0;
+        let scale = 1.2;
+        let drawColor = { r: 0, g: 255, b: 0 };
+        let dragging = false;
+        let previousX = 0;
+        let previousY = 0;
+        const keys = {};
+
+        function putPixel(x, y, r, g, b, a = 255) {
+            if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
+            const idx = (y * canvas.width + x) * 4;
+            pixels[idx] = r;
+            pixels[idx + 1] = g;
+            pixels[idx + 2] = b;
+            pixels[idx + 3] = a;
+        }
+
+        function putLinePixel(x, y, r, g, b) {
+            if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
+            const idx = (y * canvas.width + x) * 4;
+            lineBuffer[idx] = r;
+            lineBuffer[idx + 1] = g;
+            lineBuffer[idx + 2] = b;
+            lineBuffer[idx + 3] = 255;
+        }
+
+        function fillBackground(r, g, b) {
+            for (let i = 0; i < pixels.length; i += 4) {
+                pixels[i] = r;
+                pixels[i + 1] = g;
+                pixels[i + 2] = b;
+                pixels[i + 3] = 255;
+            }
+        }
+
+        function drawLine(x1, y1, x2, y2, r, g, b) {
+            const dx = Math.abs(x2 - x1);
+            const dy = Math.abs(y2 - y1);
+
+            if (dx > dy) {
+                const m = (x2 === x1) ? 0 : (y2 - y1) / (x2 - x1);
+                const c = y1 - m * x1;
+                const start = Math.min(x1, x2);
+                const end = Math.max(x1, x2);
+                for (let x = start; x <= end; x++) {
+                    const y = Math.round(m * x + c);
+                    putLinePixel(x, y, r, g, b);
+                }
+            } else {
+                const m = (y2 === y1) ? 0 : (x2 - x1) / (y2 - y1);
+                const c = x1 - m * y1;
+                const start = Math.min(y1, y2);
+                const end = Math.max(y1, y2);
+                for (let y = start; y <= end; y++) {
+                    const x = Math.round(m * y + c);
+                    putLinePixel(x, y, r, g, b);
+                }
+            }
+        }
+
+        function drawSpriteWithTransform24Bit(sprite, centerX, centerY, degree, scaleVal) {
+            if (scaleVal <= 0.1) return;
+
+            const spriteW = sprite[0].length;
+            const spriteH = sprite.length;
+
+            const rad = -degree * Math.PI / 180;
+            const cos = Math.cos(rad);
+            const sin = Math.sin(rad);
+
+            const maxDim = Math.max(spriteW, spriteH);
+            const boundingRadius = Math.ceil(maxDim * scaleVal * 1.5);
+
+            for (let screenY = centerY - boundingRadius; screenY <= centerY + boundingRadius; screenY++) {
+                for (let screenX = centerX - boundingRadius; screenX <= centerX + boundingRadius; screenX++) {
+                    const dx = screenX - centerX;
+                    const dy = screenY - centerY;
+
+                    const rotX = dx * cos - dy * sin;
+                    const rotY = dx * sin + dy * cos;
+
+                    const spriteX = Math.floor(rotX / scaleVal + spriteW / 2);
+                    const spriteY = Math.floor(rotY / scaleVal + spriteH / 2);
+
+                    if (spriteY >= 0 && spriteY < spriteH && spriteX >= 0 && spriteX < spriteW) {
+                        const color = sprite[spriteY][spriteX];
+                        if (color !== null) {
+                            putPixel(screenX, screenY, color[0], color[1], color[2]);
+                        }
+                    }
+                }
+            }
+        }
+
+        function getMousePos(canvas, event) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            return {
+                x: Math.floor((event.clientX - rect.left) * scaleX),
+                y: Math.floor((event.clientY - rect.top) * scaleY)
+            };
+        }
+
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+
+            if (e.key === '1') drawColor = { r: 255, g: 0, b: 0 };
+            if (e.key === '2') drawColor = { r: 0, g: 255, b: 0 };
+            if (e.key === '3') drawColor = { r: 0, g: 100, b: 255 };
+        });
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+
+        canvas.addEventListener('mousedown', (event) => {
+            dragging = true;
+            const { x, y } = getMousePos(canvas, event);
+            previousX = x;
+            previousY = y;
+        });
+
+        canvas.addEventListener('mouseup', () => dragging = false);
+        canvas.addEventListener('mouseleave', () => dragging = false);
+
+        canvas.addEventListener('mousemove', (event) => {
+            if (dragging) {
+                const { x, y } = getMousePos(canvas, event);
+                drawLine(previousX, previousY, x, y, drawColor.r, drawColor.g, drawColor.b);
+                previousX = x;
+                previousY = y;
+            }
+        });
+
+        function update() {
+            if (keys['ArrowUp']) scale += 0.05;
+            if (keys['ArrowDown']) scale -= 0.05;
+            scale = Math.max(0.3, Math.min(3.0, scale));
+
+            if (keys['ArrowLeft']) rotation -= 4;
+            if (keys['ArrowRight']) rotation += 4;
+
+            if (keys['w'] || keys['W']) posY -= 2;
+            if (keys['s'] || keys['S']) posY += 2;
+            if (keys['a'] || keys['A']) posX -= 2;
+            if (keys['d'] || keys['D']) posX += 2;
+
+            posX = Math.max(10, Math.min(canvas.width - 10, posX));
+            posY = Math.max(10, Math.min(canvas.height - 10, posY));
+        }
+
+        function animate() {
+            fillBackground(0, 0, 0);
+
+            for (let i = 0; i < pixels.length; i += 4) {
+                if (lineBuffer[i + 3] !== 0) {
+                    pixels[i] = lineBuffer[i];
+                    pixels[i + 1] = lineBuffer[i + 1];
+                    pixels[i + 2] = lineBuffer[i + 2];
+                }
+            }
+
+            update();
+            drawSpriteWithTransform24Bit(sprite24Bit, posX, posY, rotation, scale);
+
+            ctx.putImageData(imageData, 0, 0);
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
