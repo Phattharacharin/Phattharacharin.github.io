@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phattharacharin - CV & Interactive Computer Graphics</title>
+    <title>Phattharacharin - CV & 3D Interactive Computer Graphics</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
 
@@ -193,45 +193,52 @@
                     <p><strong>Raster Graphics Functions:</strong></p>
                     <p>• putPixel() - วาดพิกเซลทีละจุด</p>
                     <p>• drawSprite24Bit() - วาด Sprite สี 24-bit (RGB)</p>
-                    <p>• Color Picking - คำนวณพิกัดคลิกบนวัตถุ</p>
+                    <p>• 3D Ray-Plane Interactive Color Picking</p>
                 </div>
 
                 <div class="info-box">
-                    <p><strong>2D Transformation Algorithms:</strong></p>
-                    <p>• Translation (การเลื่อนตำแหน่ง)</p>
-                    <p>• Rotation Matrix (การหมุนวัตถุ)</p>
-                    <p>• Scaling (การย่อ/ขยายขนาด)</p>
-                    <p>• Backward Mapping Algorithm</p>
+                    <p><strong>3D Perspective Transformation Algorithms:</strong></p>
+                    <p>• Translation (X, Y)</p>
+                    <p>• 3D Rotation Matrix (Pitch, Yaw, Roll)</p>
+                    <p>• Ultra Scaling (0.3x - 10.0x)</p>
+                    <p>• 3D Perspective Ray Casting Backward Mapping</p>
                 </div>
             </div>
 
             <!-- Interactive Graphics Section -->
             <div class="graphics-section">
-                <h2>Interactive Computer Graphics</h2>
+                <h2>Interactive Computer Graphics (3D Perspective)</h2>
                 <canvas id="canvas" width="200" height="200"></canvas>
 
                 <div class="controls">
-                    <p><strong>Keyboard Controls</strong></p>
+                    <p><strong>⌨️ Keyboard Controls</strong></p>
                     <p>
                         <span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span class="key">D</span> : เลื่อนตำแหน่ง (Translate)
                     </p>
                     <p>
-                        <span class="key">←</span> / <span class="key">→</span> : หมุน Sprite (Rotate)
+                        <span class="key">I</span> / <span class="key">K</span> : หมุนพับ 3D ไปข้างหลัง / หน้า (Pitch)
                     </p>
                     <p>
-                        <span class="key">↑</span> / <span class="key">↓</span> : ย่อ / ขยาย Sprite (Scale)
+                        <span class="key">J</span> / <span class="key">L</span> : หมุนหัน 3D ซ้าย / ขวา (Yaw)
+                    </p>
+                    <p>
+                        <span class="key">←</span> / <span class="key">→</span> : หมุน 2D (Roll)
+                    </p>
+                    <p>
+                        <span class="key">↑</span> / <span class="key">↓</span> : ย่อ / ขยายใหญ่สูงสุด 10x (Scale)
                     </p>
 
                     <p style="margin-top: 10px; color: #2563eb; font-weight: 500;">
-                        💡 คลิกที่ส่วนต่างๆ บนรูป Sprite เพื่อเปลี่ยนสีส่วนนั้น!
+                        💡 คลิกที่ส่วนต่างๆ บนรูป Sprite ในมุมมอง 3D เพื่อเปลี่ยนสี!
                     </p>
 
                     <div class="algorithm-info">
                         <strong>Algorithms Implementation:</strong><br>
                         • 24-Bit RGB Pixel Matrix<br>
                         • Custom putPixel Rendering<br>
-                        • Backward Mapping Transformation<br>
-                        • Interactive 2D Color Picking (Inverse Map)
+                        • 3D Rotation Matrix & Perspective Projection<br>
+                        • Ultra Scaling (Up to 10x Scale Factor)<br>
+                        • Ray Casting Plane Intersection for 3D Color Picking
                     </div>
                 </div>
             </div>
@@ -252,7 +259,7 @@
         const _ = null;
         const K = [15, 23, 42];       // Black Outline
         const W = [255, 255, 255];    // White
-        let   R = [239, 68, 68];      // Red (ส่วนบน)
+        let   R = [239, 68, 68];      // Red
         const G = [203, 213, 225];    // Gray Button
 
         // 24-Bit Sprite Matrix (Pokéball 10x10)
@@ -271,8 +278,11 @@
 
         let posX = canvas.width / 2;
         let posY = canvas.height / 2;
-        let rotation = 0;
-        let scale = 1.2;
+        let rotPitch = 0; // หมุนพับ 3D ขึ้น-ลง (X-Axis)
+        let rotYaw = 0;   // หมุนหัน 3D ซ้าย-ขวา (Y-Axis)
+        let rotRoll = 0;  // หมุน 2D (Z-Axis)
+        let scale = 3.0;  // ค่าเริ่มต้นใหญ่ขึ้น
+        const f = 180;    // Focal Length (ระยะ Perspective กล้อง)
         const keys = {};
 
         function putPixel(x, y, r, g, b, a = 255) {
@@ -293,29 +303,58 @@
             }
         }
 
-        function drawSpriteWithTransform24Bit(sprite, centerX, centerY, degree, scaleVal) {
+        // =========================================================
+        // 3D Perspective Ray-Plane Rendering Algorithm
+        // =========================================================
+        function drawSpriteWithTransform3D(sprite, centerX, centerY, pitch, yaw, roll, scaleVal) {
             if (scaleVal <= 0.1) return;
 
             const spriteW = sprite[0].length;
             const spriteH = sprite.length;
 
-            const rad = -degree * Math.PI / 180;
-            const cos = Math.cos(rad);
-            const sin = Math.sin(rad);
+            const rx = pitch * Math.PI / 180;
+            const ry = yaw * Math.PI / 180;
+            const rz = roll * Math.PI / 180;
 
-            const maxDim = Math.max(spriteW, spriteH);
-            const boundingRadius = Math.ceil(maxDim * scaleVal * 1.5);
+            const cx = Math.cos(rx), sx = Math.sin(rx);
+            const cy = Math.cos(ry), sy = Math.sin(ry);
+            const cz = Math.cos(rz), sz = Math.sin(rz);
 
-            for (let screenY = centerY - boundingRadius; screenY <= centerY + boundingRadius; screenY++) {
-                for (let screenX = centerX - boundingRadius; screenX <= centerX + boundingRadius; screenX++) {
+            // 3D Matrix Axes (U, V, Normal)
+            const Ux = cz * cy;
+            const Uy = sz * cy;
+            const Uz = -sy;
+
+            const Vx = cz * sy * sx - sz * cx;
+            const Vy = sz * sy * sx + cz * cx;
+            const Vz = cy * sx;
+
+            const Nx = cz * sy * cx + sz * sx;
+            const Ny = sz * sy * cx - cz * sx;
+            const Nz = cy * cx;
+
+            const maxRange = Math.ceil(Math.max(spriteW, spriteH) * scaleVal * 2.5);
+
+            for (let screenY = centerY - maxRange; screenY <= centerY + maxRange; screenY++) {
+                for (let screenX = centerX - maxRange; screenX <= centerX + maxRange; screenX++) {
                     const dx = screenX - centerX;
                     const dy = screenY - centerY;
 
-                    const rotX = dx * cos - dy * sin;
-                    const rotY = dx * sin + dy * cos;
+                    const dotDN = dx * Nx + dy * Ny + f * Nz;
+                    if (Math.abs(dotDN) < 0.0001) continue;
 
-                    const spriteX = Math.floor(rotX / scaleVal + spriteW / 2);
-                    const spriteY = Math.floor(rotY / scaleVal + spriteH / 2);
+                    const t = (f * Nz) / dotDN;
+                    if (t <= 0) continue;
+
+                    const hx = t * dx;
+                    const hy = t * dy;
+                    const hz = t * f - f;
+
+                    const uLocal = hx * Ux + hy * Uy + hz * Uz;
+                    const vLocal = hx * Vx + hy * Vy + hz * Vz;
+
+                    const spriteX = Math.floor(uLocal / scaleVal + spriteW / 2);
+                    const spriteY = Math.floor(vLocal / scaleVal + spriteH / 2);
 
                     if (spriteY >= 0 && spriteY < spriteH && spriteX >= 0 && spriteX < spriteW) {
                         const color = sprite[spriteY][spriteX];
@@ -328,7 +367,7 @@
         }
 
         // =========================================================
-        // Click Event: คำนวณ Backward Mapping หาจุดที่คลิกเพื่อเปลี่ยนสี
+        // 3D Color Picking (Ray-Plane Intersection on Click)
         // =========================================================
         canvas.addEventListener('click', (event) => {
             const rect = canvas.getBoundingClientRect();
@@ -338,30 +377,51 @@
             const spriteW = sprite24Bit[0].length;
             const spriteH = sprite24Bit.length;
 
-            const rad = -rotation * Math.PI / 180;
-            const cos = Math.cos(rad);
-            const sin = Math.sin(rad);
+            const rx = rotPitch * Math.PI / 180;
+            const ry = rotYaw * Math.PI / 180;
+            const rz = rotRoll * Math.PI / 180;
+
+            const cx = Math.cos(rx), sx = Math.sin(rx);
+            const cy = Math.cos(ry), sy = Math.sin(ry);
+            const cz = Math.cos(rz), sz = Math.sin(rz);
+
+            const Ux = cz * cy;
+            const Uy = sz * cy;
+            const Uz = -sy;
+
+            const Vx = cz * sy * sx - sz * cx;
+            const Vy = sz * sy * sx + cz * cx;
+            const Vz = cy * sx;
+
+            const Nx = cz * sy * cx + sz * sx;
+            const Ny = sz * sy * cx - cz * sx;
+            const Nz = cy * cx;
 
             const dx = mouseX - posX;
             const dy = mouseY - posY;
 
-            // Inverse Matrix Rotation & Scale
-            const rotX = dx * cos - dy * sin;
-            const rotY = dx * sin + dy * cos;
+            const dotDN = dx * Nx + dy * Ny + f * Nz;
+            if (Math.abs(dotDN) > 0.0001) {
+                const t = (f * Nz) / dotDN;
+                if (t > 0) {
+                    const hx = t * dx;
+                    const hy = t * dy;
+                    const hz = t * f - f;
 
-            const spriteX = Math.floor(rotX / scale + spriteW / 2);
-            const spriteY = Math.floor(rotY / scale + spriteH / 2);
+                    const uLocal = hx * Ux + hy * Uy + hz * Uz;
+                    const vLocal = hx * Vx + hy * Vy + hz * Vz;
 
-            // เช็กว่าคลิกโดน Sprite หรือไม่
-            if (spriteY >= 0 && spriteY < spriteH && spriteX >= 0 && spriteX < spriteW) {
-                const targetColor = sprite24Bit[spriteY][spriteX];
-                
-                // ถ้าไม่คลิกตรงส่วนโปร่งใส (_) และไม่คลิกเส้นขอบสีดำ (K)
-                if (targetColor !== null && targetColor !== K) {
-                    // สุ่มสี RGB ใหม่
-                    targetColor[0] = Math.floor(Math.random() * 256);
-                    targetColor[1] = Math.floor(Math.random() * 256);
-                    targetColor[2] = Math.floor(Math.random() * 256);
+                    const spriteX = Math.floor(uLocal / scale + spriteW / 2);
+                    const spriteY = Math.floor(vLocal / scale + spriteH / 2);
+
+                    if (spriteY >= 0 && spriteY < spriteH && spriteX >= 0 && spriteX < spriteW) {
+                        const targetColor = sprite24Bit[spriteY][spriteX];
+                        if (targetColor !== null && targetColor !== K) {
+                            targetColor[0] = Math.floor(Math.random() * 256);
+                            targetColor[1] = Math.floor(Math.random() * 256);
+                            targetColor[2] = Math.floor(Math.random() * 256);
+                        }
+                    }
                 }
             }
         });
@@ -370,26 +430,37 @@
         document.addEventListener('keyup', (e) => keys[e.key] = false);
 
         function update() {
-            if (keys['ArrowUp']) scale += 0.05;
-            if (keys['ArrowDown']) scale -= 0.05;
-            scale = Math.max(0.3, Math.min(3.0, scale));
+            // ย่อ / ขยายได้สูงสุดถึง 10 เท่า (10.0)
+            if (keys['ArrowUp']) scale += 0.1;
+            if (keys['ArrowDown']) scale -= 0.1;
+            scale = Math.max(0.3, Math.min(10.0, scale));
 
-            if (keys['ArrowLeft']) rotation -= 4;
-            if (keys['ArrowRight']) rotation += 4;
+            // หมุน 2D (Roll)
+            if (keys['ArrowLeft']) rotRoll -= 4;
+            if (keys['ArrowRight']) rotRoll += 4;
 
-            if (keys['w'] || keys['W']) posY -= 2;
-            if (keys['s'] || keys['S']) posY += 2;
-            if (keys['a'] || keys['A']) posX -= 2;
-            if (keys['d'] || keys['D']) posX += 2;
+            // หมุน 3D พับไปข้างหลัง / หน้า (Pitch)
+            if (keys['i'] || keys['I']) rotPitch -= 4;
+            if (keys['k'] || keys['K']) rotPitch += 4;
 
-            posX = Math.max(10, Math.min(canvas.width - 10, posX));
-            posY = Math.max(10, Math.min(canvas.height - 10, posY));
+            // หมุน 3D หันซ้าย / ขวา (Yaw)
+            if (keys['j'] || keys['J']) rotYaw -= 4;
+            if (keys['l'] || keys['L']) rotYaw += 4;
+
+            // Translation (WASD)
+            if (keys['w'] || keys['W']) posY -= 3;
+            if (keys['s'] || keys['S']) posY += 3;
+            if (keys['a'] || keys['A']) posX -= 3;
+            if (keys['d'] || keys['D']) posX += 3;
+
+            posX = Math.max(-50, Math.min(canvas.width + 50, posX));
+            posY = Math.max(-50, Math.min(canvas.height + 50, posY));
         }
 
         function animate() {
             fillBackground(0, 0, 0);
             update();
-            drawSpriteWithTransform24Bit(sprite24Bit, posX, posY, rotation, scale);
+            drawSpriteWithTransform3D(sprite24Bit, posX, posY, rotPitch, rotYaw, rotRoll, scale);
             ctx.putImageData(imageData, 0, 0);
             requestAnimationFrame(animate);
         }
