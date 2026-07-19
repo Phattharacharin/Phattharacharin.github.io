@@ -1,525 +1,98 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phattharacharin - CV & Interactive Computer Graphics</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-
-        .content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            padding: 40px;
-        }
-
-        .cv-section {
-            padding: 20px;
-        }
-
-        .cv-section h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-
-        .cv-section h3 {
-            color: #764ba2;
-            margin-top: 15px;
-            margin-bottom: 10px;
-        }
-
-        .cv-section p, .cv-section li {
-            color: #333;
-            line-height: 1.6;
-            margin-bottom: 8px;
-        }
-
-        .cv-section ul {
-            list-style: none;
-            padding-left: 20px;
-        }
-
-        .cv-section li:before {
-            content: "✓ ";
-            color: #667eea;
-            font-weight: bold;
-            margin-right: 8px;
-        }
-
-        .info-box {
-            background: #f5f5f5;
-            padding: 15px;
-            border-left: 4px solid #667eea;
-            margin: 10px 0;
-            border-radius: 5px;
-        }
-
-        .graphics-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .graphics-section h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-            width: 100%;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-
-        canvas {
-            border: 2px solid #667eea;
-            border-radius: 10px;
-            background: black;
-            image-rendering: pixelated;
-            margin-bottom: 15px;
-            width: 400px;
-            height: 400px;
-            cursor: crosshair;
-        }
-
-        .controls {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 0.9em;
-            width: 100%;
-            text-align: center;
-            color: #333;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .controls p {
-            margin: 5px 0;
-        }
-
-        .key {
-            background: #667eea;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-weight: bold;
-            display: inline-block;
-            margin: 0 3px;
-            font-size: 0.9em;
-        }
-
-        .algorithm-info {
-            background: #fffacd;
-            border-left: 4px solid #ffa500;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            font-size: 0.8em;
-            color: #333;
-            text-align: left;
-        }
-
-        @media (max-width: 768px) {
-            .content {
-                grid-template-columns: 1fr;
-            }
-
-            .header h1 {
-                font-size: 1.8em;
-            }
-
-            canvas {
-                width: 100%;
-                height: auto;
-            }
-        }
-
-        footer {
-            background: #f5f5f5;
-            padding: 20px;
-            text-align: center;
-            color: #666;
-            font-size: 0.9em;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>👨‍💻 Phattharacharin Khamsitha</h1>
-            <p>Computer Science Student | Interactive Computer Graphics</p>
-        </div>
-
-        <div class="content">
-            <!-- CV Section -->
-            <div class="cv-section">
-                <h2>📋 ข้อมูลส่วนตัว</h2>
-                <div class="info-box">
-                    <p><strong>ชื่อ:</strong> Phattharacharin Khamsitha</p>
-                    <p><strong>อายุ:</strong> 22 ปี (เกิด 14 ธันวาคม 2004)</p>
-                    <p><strong>Email:</strong> phattharacharin.k@ku.th</p>
-                    <p><strong>โทรศัพท์:</strong> 0616041471</p>
-                </div>
-
-                <h2>🎓 การศึกษา</h2>
-                <h3>ปริญญาตรี วิทยาการคอมพิวเตอร์</h3>
-                <p>มหาวิทยาลัยเกษตรศาสตร์ วิทยาเขตกำแพงแสน</p>
-
-                <h2>💻 ทักษะ Computer Graphics</h2>
-                <div class="info-box">
-                    <p><strong>ฟังก์ชัน Raster Graphics:</strong></p>
-                    <p>✓ putPixel() - วาดพิกเซลทีละตัว</p>
-                    <p>✓ drawLine() - วาดเส้นตรงด้วยอัลกอริทึม</p>
-                    <p>✓ drawSprite24Bit() - วาด Sprite สี 24-bit (RGB)</p>
-                </div>
-
-                <div class="info-box">
-                    <p><strong>ภาษาการเขียนโปรแกรม:</strong></p>
-                    <p>✓ C++ - ระดับสูง</p>
-                    <p>✓ JavaScript - ระดับสูง</p>
-                    <p>✓ Java - ระดับกลาง</p>
-                </div>
-
-                <div class="info-box">
-                    <p><strong>Transform Algorithm:</strong></p>
-                    <p>✓ Translate (เลื่อนตำแหน่ง)</p>
-                    <p>✓ Rotate (หมุน) - คำนวณด้วย Matrix</p>
-                    <p>✓ Scale (ขยาย/ย่อ) - คำนวณอัตราส่วน</p>
-                    <p>✓ Backward Mapping Algorithm</p>
-                </div>
-            </div>
-
-            <!-- Interactive Graphics Section -->
-            <div class="graphics-section">
-                <h2>🎨 Interactive Computer Graphics</h2>
-                <canvas id="canvas" width="200" height="200"></canvas>
-
-                <div class="controls">
-                    <p><strong>⌨️ Keyboard Control:</strong></p>
-                    <p>
-                        <span class="key">1</span> = ปากกาแดง |
-                        <span class="key">2</span> = ปากกาเขียว |
-                        <span class="key">3</span> = ปากกาน้ำเงิน
-                    </p>
-                    <p style="margin-top: 10px;">
-                        <span class="key">↑</span> / <span class="key">↓</span> = ขยาย/ย่อ Sprite (Scale)
-                    </p>
-                    <p>
-                        <span class="key">←</span> / <span class="key">→</span> = หมุน Sprite (Rotate)
-                    </p>
-                    <p>
-                        <span class="key">W</span> / <span class="key">S</span> / <span class="key">A</span> / <span class="key">D</span> = เลื่อนตำแหน่ง (Translate)
-                    </p>
-
-                    <p style="margin-top: 10px; font-style: italic; color: #666;">
-                        🖱️ ลากเมาส์บน Canvas เพื่อวาดเส้น
-                    </p>
-
-                    <div class="algorithm-info">
-                        <strong>🔧 Algorithms Used:</strong><br>
-                        • 24-bit Sprite Matrix - Full RGB Color Depth<br>
-                        • putPixel() - Pixel-by-pixel rendering<br>
-                        • drawLine() - Line rasterization<br>
-                        • Backward Mapping - Transformation calculation<br>
-                        • Rotation & Scale Matrix - Math computation
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <footer>
-            <p>© 2026 Phattharacharin Khamsitha | Computer Graphics Project</p>
-        </footer>
-    </div>
-
-    <script>
-        // ========================================
-        // Canvas & Buffer Setup
-        // ========================================
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const imageData = ctx.createImageData(canvas.width, canvas.height);
-        const pixels = imageData.data;
-
-        // Buffer สำหรับเก็บเส้นที่วาดด้วยเมาส์ (เพื่อไม่ให้หายเวลารีเฟรช Frame)
-        const lineBuffer = new Uint8ClampedArray(canvas.width * canvas.height * 4);
-
-        // ========================================
-        // 24-Bit Color Palette Definitions [R, G, B]
-        // ========================================
-        const _ = null;                  // Transparent
-        const K = [0, 0, 0];             // Black
-        const W = [255, 255, 255];       // White
-        const R = [235, 50, 35];         // Red
-        const Y = [255, 206, 0];         // Yellow
-        const G = [70, 200, 80];         // Green
-        const B = [40, 130, 240];        // Blue
-        const P = [255, 160, 200];       // Pink
-
-        // ========================================
-        // 24-Bit Sprite Matrix (10x10 RGB Pixel Art)
-        // ========================================
-        const sprite24Bit = [
-            [_, _, R, R, R, R, R, R, _, _],
-            [_, R, R, R, R, R, R, R, R, _],
-            [_, R, W, K, R, R, W, K, R, _],
-            [_, R, W, W, R, R, W, W, R, _],
-            [R, R, R, R, P, P, R, R, R, R],
-            [R, R, R, Y, Y, Y, Y, R, R, R],
-            [_, R, G, G, B, B, G, G, R, _],
-            [_, _, G, G, G, G, G, G, _, _],
-            [_, G, G, _, _, _, _, G, G, _],
-            [G, G, G, _, _, _, _, G, G, G]
-        ];
-
-        // ========================================
-        // Control Variables
-        // ========================================
-        let posX = canvas.width / 2;
-        let posY = canvas.height / 2;
-        let rotation = 0;
-        let scale = 1.2;
-        let drawColor = { r: 0, g: 255, b: 0 };
-        let dragging = false;
-        let previousX = 0;
-        let previousY = 0;
-        const keys = {};
-
-        // ========================================
-        // 1. putPixel - เขียนพิกเซลลง Main Buffer
-        // ========================================
-        function putPixel(x, y, r, g, b, a = 255) {
-            if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
-            const idx = (y * canvas.width + x) * 4;
-            pixels[idx] = r;
-            pixels[idx + 1] = g;
-            pixels[idx + 2] = b;
-            pixels[idx + 3] = a;
-        }
-
-        // ========================================
-        // 2. putLinePixel - บันทึกพิกเซลเส้นที่ลากลง Line Buffer
-        // ========================================
-        function putLinePixel(x, y, r, g, b) {
-            if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
-            const idx = (y * canvas.width + x) * 4;
-            lineBuffer[idx] = r;
-            lineBuffer[idx + 1] = g;
-            lineBuffer[idx + 2] = b;
-            lineBuffer[idx + 3] = 255;
-        }
-
-        // ========================================
-        // 3. fillBackground - เคลียร์หน้าจอเป็นสีดำ
-        // ========================================
-        function fillBackground(r, g, b) {
-            for (let i = 0; i < pixels.length; i += 4) {
-                pixels[i] = r;
-                pixels[i + 1] = g;
-                pixels[i + 2] = b;
-                pixels[i + 3] = 255;
-            }
-        }
-
-        // ========================================
-        // 4. drawLine - อัลกอริทึมวาดเส้นตรง
-        // ========================================
-        function drawLine(x1, y1, x2, y2, r, g, b) {
-            const dx = Math.abs(x2 - x1);
-            const dy = Math.abs(y2 - y1);
-
-            if (dx > dy) {
-                const m = (x2 === x1) ? 0 : (y2 - y1) / (x2 - x1);
-                const c = y1 - m * x1;
-                const start = Math.min(x1, x2);
-                const end = Math.max(x1, x2);
-                for (let x = start; x <= end; x++) {
-                    const y = Math.round(m * x + c);
-                    putLinePixel(x, y, r, g, b);
-                }
-            } else {
-                const m = (y2 === y1) ? 0 : (x2 - x1) / (y2 - y1);
-                const c = x1 - m * y1;
-                const start = Math.min(y1, y2);
-                const end = Math.max(y1, y2);
-                for (let y = start; y <= end; y++) {
-                    const x = Math.round(m * y + c);
-                    putLinePixel(x, y, r, g, b);
-                }
-            }
-        }
-
-        // ========================================
-        // 5. Backward Mapping สำหรับ 24-bit Sprite Transform
-        // ========================================
-        function drawSpriteWithTransform24Bit(sprite, centerX, centerY, degree, scaleVal) {
-            if (scaleVal <= 0.1) return;
-
-            const spriteW = sprite[0].length;
-            const spriteH = sprite.length;
-
-            const rad = -degree * Math.PI / 180;
-            const cos = Math.cos(rad);
-            const sin = Math.sin(rad);
-
-            const maxDim = Math.max(spriteW, spriteH);
-            const boundingRadius = Math.ceil(maxDim * scaleVal * 1.5);
-
-            for (let screenY = centerY - boundingRadius; screenY <= centerY + boundingRadius; screenY++) {
-                for (let screenX = centerX - boundingRadius; screenX <= centerX + boundingRadius; screenX++) {
-                    const dx = screenX - centerX;
-                    const dy = screenY - centerY;
-
-                    // Inverse Matrix Rotation
-                    const rotX = dx * cos - dy * sin;
-                    const rotY = dx * sin + dy * cos;
-
-                    // Inverse Scale & Map back to Sprite Index
-                    const spriteX = Math.floor(rotX / scaleVal + spriteW / 2);
-                    const spriteY = Math.floor(rotY / scaleVal + spriteH / 2);
-
-                    if (spriteY >= 0 && spriteY < spriteH && spriteX >= 0 && spriteX < spriteW) {
-                        const color = sprite[spriteY][spriteX];
-                        if (color !== null) { // แสดงผลสี 24-bit RGB เฉพาะจุดที่ไม่ใช่โปร่งใส
-                            putPixel(screenX, screenY, color[0], color[1], color[2]);
-                        }
-                    }
-                }
-            }
-        }
-
-        // ========================================
-        // 6. Mouse Interaction Helpers
-        // ========================================
-        function getMousePos(canvas, event) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            return {
-                x: Math.floor((event.clientX - rect.left) * scaleX),
-                y: Math.floor((event.clientY - rect.top) * scaleY)
-            };
-        }
-
-        // ========================================
-        // 7. Event Listeners
-        // ========================================
-        document.addEventListener('keydown', (e) => {
-            keys[e.key] = true;
-
-            if (e.key === '1') drawColor = { r: 255, g: 0, b: 0 };
-            if (e.key === '2') drawColor = { r: 0, g: 255, b: 0 };
-            if (e.key === '3') drawColor = { r: 0, g: 100, b: 255 };
-        });
-
-        document.addEventListener('keyup', (e) => {
-            keys[e.key] = false;
-        });
-
-        canvas.addEventListener('mousedown', (event) => {
-            dragging = true;
-            const { x, y } = getMousePos(canvas, event);
-            previousX = x;
-            previousY = y;
-        });
-
-        canvas.addEventListener('mouseup', () => dragging = false);
-        canvas.addEventListener('mouseleave', () => dragging = false);
-
-        canvas.addEventListener('mousemove', (event) => {
-            if (dragging) {
-                const { x, y } = getMousePos(canvas, event);
-                drawLine(previousX, previousY, x, y, drawColor.r, drawColor.g, drawColor.b);
-                previousX = x;
-                previousY = y;
-            }
-        });
-
-        // ========================================
-        // 8. Update Keyboard Transformation State
-        // ========================================
-        function update() {
-            if (keys['ArrowUp']) scale += 0.05;
-            if (keys['ArrowDown']) scale -= 0.05;
-            scale = Math.max(0.3, Math.min(3.0, scale));
-
-            if (keys['ArrowLeft']) rotation -= 4;
-            if (keys['ArrowRight']) rotation += 4;
-
-            if (keys['w'] || keys['W']) posY -= 2;
-            if (keys['s'] || keys['S']) posY += 2;
-            if (keys['a'] || keys['A']) posX -= 2;
-            if (keys['d'] || keys['D']) posX += 2;
-
-            posX = Math.max(10, Math.min(canvas.width - 10, posX));
-            posY = Math.max(10, Math.min(canvas.height - 10, posY));
-        }
-
-        // ========================================
-        // 9. Main Animation Loop
-        // ========================================
-        function animate() {
-            // 1. ล้างหน้าจอด้วยสีดำ
-            fillBackground(0, 0, 0);
-
-            // 2. ดึงเส้นที่ลากไว้จาก Line Buffer มาวาดลงบน Main Buffer
-            for (let i = 0; i < pixels.length; i += 4) {
-                if (lineBuffer[i + 3] !== 0) {
-                    pixels[i] = lineBuffer[i];
-                    pixels[i + 1] = lineBuffer[i + 1];
-                    pixels[i + 2] = lineBuffer[i + 2];
-                }
-            }
-
-            // 3. คํานวณคีย์บอร์ด + วาด 24-Bit Sprite ทับลงไป
-            update();
-            drawSpriteWithTransform24Bit(sprite24Bit, posX, posY, rotation, scale);
-
-            // 4. ส่งค่าพิกเซลไปแสดงบน Canvas
-            ctx.putImageData(imageData, 0, 0);
-            requestAnimationFrame(animate);
-        }
-
-        animate();
-    </script>
-</body>
-</html>
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Prompt', sans-serif;
+    background-color: #0f172a; /* สีน้ำเงินมืดแบบ Modern Dark */
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 30px 15px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #1e293b;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    overflow: hidden;
+}
+
+.header {
+    background: #0f172a;
+    border-bottom: 1px solid #334155;
+    color: #fff;
+    padding: 35px 20px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2.2rem;
+    color: #38bdf8; /* สีฟ้าสว่าง */
+    letter-spacing: 0.5px;
+}
+
+.header p {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin-top: 5px;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    padding: 35px;
+}
+
+.cv-section h2, .graphics-section h2 {
+    color: #f8fafc;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    border-left: 4px solid #38bdf8;
+    padding-left: 10px;
+    border-bottom: none; /* ปลดเส้นใต้ออก */
+}
+
+.info-box {
+    background: #0f172a;
+    padding: 15px;
+    border: 1px solid #334155;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+
+.info-box p {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+}
+
+canvas {
+    border: 2px solid #38bdf8;
+    border-radius: 8px;
+    background: #000;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+.controls {
+    background: #0f172a;
+    border: 1px solid #334155;
+    padding: 15px;
+    border-radius: 8px;
+    color: #94a3b8;
+}
+
+.key {
+    background: #38bdf8;
+    color: #0f172a;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-family: monospace;
+}
