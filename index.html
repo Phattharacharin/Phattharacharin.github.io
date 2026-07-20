@@ -176,7 +176,7 @@
             <div class="cv-section">
                 <h2>ข้อมูลส่วนตัว</h2>
                 <div class="info-box">
-                    <p><strong>ชื่อ-นามสกุล:</strong> ภัทรชรินทร์ คำสีทา</p>
+                    <p><strong>ชื่อ-นามสกุล:</strong> ภัทรจาริน คำศรีทา</p>
                     <p><strong>อายุ:</strong> 22 ปี (เกิด 14 ธันวาคม 2004)</p>
                     <p><strong>Email:</strong> phattharacharin.k@ku.th</p>
                     <p><strong>โทรศัพท์:</strong> 0616041471</p>
@@ -184,11 +184,11 @@
 
                 <h2>การศึกษา</h2>
                 <div class="info-box">
-                    <p><strong>ปริญญาตรี:</strong> วิทยาการคอมพิวเตอร์</p>
+                    <p><strong>ปริญญาตรี:</strong> คณะศิลปศาสตร์และวิทยาศาสตร์ สาขาวิทยาการคอมพิวเตอร์</p>
                     <p>มหาวิทยาลัยเกษตรศาสตร์ วิทยาเขตกำแพงแสน</p>
                 </div>
 
-                <h2>ทักษะและอัลกอริทึมที่ใช้</h2>
+                <h2>ทักษะและอัลกอริทึมที่ใช</h2>
                 <div class="info-box">
                     <p><strong>Raster Graphics Functions:</strong></p>
                     <p>• putPixel() - วาดพิกเซลทีละจุด</p>
@@ -255,26 +255,29 @@
         const imageData = ctx.createImageData(canvas.width, canvas.height);
         const pixels = imageData.data;
 
-        // 24-bit Color Palette Reference
-        const _ = null;
-        const K = [15, 23, 42];       // Black Outline
-        const W = [255, 255, 255];    // White
-        let   R = [239, 68, 68];      // Red
-        const G = [203, 213, 225];    // Gray Button
+       // Palette สี 24-bit สำหรับโดราเอมอน
+const _ = null;
+const K = [15, 23, 42];       // สีดำ (ขอบ)
+const W = [255, 255, 255];    // สีขาว (ตา, หน้า, ท้อง)
+const B = [37, 99, 235];      // สีฟ้าสด (ตัวโดราเอมอน)
+const R = [239, 68, 68];      // สีแดง (จมูก, ปาก, ปลอกคอ)
+const Y = [250, 204, 21];     // สีเหลือง (กระดิ่ง)
 
-        // 24-Bit Sprite Matrix (Pokéball 10x10)
-        const sprite24Bit = [
-            [_, _, K, K, K, K, K, K, _, _],
-            [_, K, R, R, R, R, R, R, K, _],
-            [K, R, R, R, R, R, R, R, R, K],
-            [K, R, R, R, R, R, R, R, R, K],
-            [K, K, K, K, G, G, K, K, K, K],
-            [K, K, K, K, W, W, K, K, K, K],
-            [K, W, W, W, W, W, W, W, W, K],
-            [K, W, W, W, W, W, W, W, W, K],
-            [_, K, W, W, W, W, W, W, K, _],
-            [_, _, K, K, K, K, K, K, _, _]
-        ];
+// 24-Bit Sprite Matrix: โดราเอมอน (12x12)
+const sprite24Bit = [
+    [_, _, _, K, K, K, K, K, K, _, _, _],
+    [_, _, K, B, B, B, B, B, B, K, _, _],
+    [_, K, B, W, K, B, B, W, K, B, K, _],
+    [_, K, B, W, W, R, R, W, W, B, K, _],
+    [K, B, W, W, W, W, W, W, W, W, B, K],
+    [K, B, W, R, R, R, R, R, R, W, B, K],
+    [_, K, B, W, W, W, W, W, W, B, K, _],
+    [_, _, K, R, R, R, R, R, R, K, _, _],
+    [_, K, B, B, W, Y, Y, W, B, B, K, _],
+    [_, K, B, W, W, W, W, W, W, B, K, _],
+    [_, K, W, W, W, W, W, W, W, W, K, _],
+    [_, _, K, K, K, K, K, K, K, K, _, _]
+];
 
         let posX = canvas.width / 2;
         let posY = canvas.height / 2;
