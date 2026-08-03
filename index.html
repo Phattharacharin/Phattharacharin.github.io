@@ -2,162 +2,75 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รวมผลงาน - Phattharacharin</title>
+    <title>รวมผลงานของฉัน</title>
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --text-color: #f8fafc;
-            --card-bg: #1e293b;
-            --accent-color: #3b82f6;
-            --hover-color: #60a5fa;
-        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            font-family: sans-serif;
+            margin: 40px;
+            line-height: 1.6;
         }
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-            background: linear-gradient(90deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
         }
-        .container {
-            max-width: 900px;
-            width: 100%;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1.5rem;
+        h3 {
+            margin-top: 25px;
         }
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
+        ul {
+            list-style-type: disc;
+        }
+        a {
+            color: #0366d6;
             text-decoration: none;
-            color: var(--text-color);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid #334155;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            border-color: var(--hover-color);
-        }
-        .card h3 {
-            margin-top: 0;
-            margin-bottom: 0.5rem;
-            color: var(--accent-color);
-            font-size: 1.2rem;
-        }
-        .card p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #94a3b8;
-            font-weight: 500;
-        }
-        .badge {
-            display: inline-block;
-            background-color: #334155;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            margin-top: 10px;
-            align-self: flex-start;
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <h1>ผลงาน Computer Graphics</h1>
-    <div class="container">
-        <a href="800_Transformation.html" class="card">
-            <h3>800 Transformation</h3>
-            <div class="badge">Root</div>
-        </a>
-        <a href="tranformation.html" class="card">
-            <h3>Transformation</h3>
-            <div class="badge">Root</div>
-        </a>
-        <a href="transformation2.html" class="card">
-            <h3>Transformation 2</h3>
-            <div class="badge">Root</div>
-        </a>
-        
-        <a href="week2/onlybox.html" class="card">
-            <h3>Only Box</h3>
-            <div class="badge">Week 2</div>
-        </a>
-        <a href="week2/paint.html" class="card">
-            <h3>Paint</h3>
-            <div class="badge">Week 2</div>
-        </a>
-        <a href="week2/Raster.html" class="card">
-            <h3>Raster</h3>
-            <div class="badge">Week 2</div>
-        </a>
+    <h1>สารบัญผลงาน</h1>
+    
+    <h3>งานทั่วไป (Root)</h3>
+    <ul>
+        <li><a href="800_Transformation.html">800 Transformation</a></li>
+        <li><a href="tranformation.html">Transformation</a></li>
+        <li><a href="transformation2.html">Transformation 2</a></li>
+    </ul>
 
-        <a href="week3/gpu.html" class="card">
-            <h3>GPU</h3>
-            <div class="badge">Week 3</div>
-        </a>
-        <a href="week3/gpu2.html" class="card">
-            <h3>GPU 2</h3>
-            <div class="badge">Week 3</div>
-        </a>
-        <a href="week3/raster.html" class="card">
-            <h3>Raster</h3>
-            <div class="badge">Week 3</div>
-        </a>
-        <a href="week3/week3.html" class="card">
-            <h3>Week 3</h3>
-            <div class="badge">Week 3</div>
-        </a>
+    <h3>สัปดาห์ที่ 2</h3>
+    <ul>
+        <li><a href="week2/onlybox.html">Only Box</a></li>
+        <li><a href="week2/paint.html">Paint</a></li>
+        <li><a href="week2/Raster.html">Raster</a></li>
+    </ul>
 
-        <a href="week4/gpu.html" class="card">
-            <h3>GPU</h3>
-            <div class="badge">Week 4</div>
-        </a>
-        <a href="week4/raster_800.html" class="card">
-            <h3>Raster 800</h3>
-            <div class="badge">Week 4</div>
-        </a>
+    <h3>สัปดาห์ที่ 3</h3>
+    <ul>
+        <li><a href="week3/gpu.html">GPU</a></li>
+        <li><a href="week3/gpu2.html">GPU 2</a></li>
+        <li><a href="week3/raster.html">Raster</a></li>
+        <li><a href="week3/week3.html">Week 3</a></li>
+    </ul>
 
-        <a href="week5/800_tranformation.html" class="card">
-            <h3>800 Transformation</h3>
-            <div class="badge">Week 5</div>
-        </a>
+    <h3>สัปดาห์ที่ 4</h3>
+    <ul>
+        <li><a href="week4/gpu.html">GPU</a></li>
+        <li><a href="week4/raster_800.html">Raster 800</a></li>
+    </ul>
 
-        <a href="week6/3d_cube.html" class="card">
-            <h3>3D Cube</h3>
-            <div class="badge">Week 6</div>
-        </a>
-        <a href="week6/3d_monkey.html" class="card">
-            <h3>3D Monkey</h3>
-            <div class="badge">Week 6</div>
-        </a>
-        <a href="week6/800.html" class="card">
-            <h3>800</h3>
-            <div class="badge">Week 6</div>
-        </a>
-        <a href="week6/matrix.html" class="card">
-            <h3>Matrix</h3>
-            <div class="badge">Week 6</div>
-        </a>
+    <h3>สัปดาห์ที่ 5</h3>
+    <ul>
+        <li><a href="week5/800_tranformation.html">800 Transformation</a></li>
+    </ul>
 
-        <a href="week6_2/gpuMesh.html" class="card">
-            <h3>GPU Mesh</h3>
-            <div class="badge">Week 6.2</div>
-        </a>
-    </div>
+    <h3>สัปดาห์ที่ 6</h3>
+    <ul>
+        <li><a href="week6/3d_cube.html">3D Cube</a></li>
+        <li><a href="week6/3d_monkey.html">3D Monkey</a></li>
+        <li><a href="week6/800.html">800</a></li>
+        <li><a href="week6/matrix.html">Matrix</a></li>
+        <li><a href="week6_2/gpuMesh.html">GPU Mesh (6.2)</a></li>
+    </ul>
 </body>
 </html>
