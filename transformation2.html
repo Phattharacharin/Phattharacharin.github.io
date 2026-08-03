@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phattharacharin - Modern CV</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Prompt:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #FDEAEA, #F4C4C9);
+            display: flex;
+            justify-content: center;
+            padding: 60px 20px;
+            min-height: 100vh;
+        }
+
+        .resume-container {
+            width: 100%;
+            max-width: 900px;
+            background-color: #1a1a1a;
+            border-radius: 50px;
+            padding: 50px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        /* Top Section */
+        .top-section {
+            display: flex;
+            gap: 25px;
+            align-items: stretch;
+        }
+
+        .profile-pic-container {
+            width: 35%;
+            position: relative;
+        }
+
+        .profile-pic-container img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 30px;
+            /* Wavy border effect simulated with multiple borders/radiuses */
+            border-top-left-radius: 70px;
+            border-bottom-right-radius: 70px;
+            background: #F8D8DC;
+            box-shadow: -10px 10px 0px rgba(248, 216, 220, 0.2);
+        }
+
+        .name-card {
+            width: 65%;
+            background-color: #F8D8DC;
+            border-radius: 40px;
+            border-top-right-radius: 80px;
+            padding: 40px 40px 30px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hello-pill {
+            position: absolute;
+            top: -20px;
+            right: 40px;
+            background: white;
+            color: #1a1a1a;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .name-card h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+            color: #1a1a1a;
+        }
+
+        .name-card h2 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .contact-info {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .contact-pill {
+            background-color: #1a1a1a;
+            color: #F8D8DC;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .contact-pill.outline {
+            background-color: transparent;
+            color: #1a1a1a;
+            border: 2px solid #1a1a1a;
+        }
+
+        /* Section Cards */
+        .card {
+            background-color: #F8D8DC;
+            border-radius: 40px;
+            padding: 40px 40px 30px;
+            position: relative;
+            color: #1a1a1a;
+        }
+
+        .section-title {
+            position: absolute;
+            top: -20px;
+            left: 40px;
+            background: white;
+            color: #1a1a1a;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .about-text {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        /* Grid */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .card-content h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .card-content .date {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        .card-content ul {
+            list-style-type: none;
+        }
+
+        .card-content ul li {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .skill-item {
+            margin-bottom: 12px;
+        }
+
+        .skill-item h4 {
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .skill-item ul li::before {
+            content: '♥';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 0.8rem;
+            color: #1a1a1a;
+        }
+
+        /* Canvas Styles */
+        .graphics-section {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
+            border-radius: 20px;
+            background: #1a1a1a;
+            width: 100%;
+            max-width: 250px;
+            aspect-ratio: 1 / 1;
+            cursor: pointer;
+            margin-bottom: 15px;
+            border: 4px solid white;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .controls p {
+            margin: 5px 0;
+        }
+
+        .key {
+            background: #1a1a1a;
+            color: #F8D8DC;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-family: monospace;
+            font-size: 0.8em;
+        }
+
+        /* Decorative dots */
+        .deco-dot {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            color: #F8D8DC;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .deco-heart {
+            top: -20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+        }
+
+        .deco-flower {
+            bottom: -20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+
+            .top-section,
+            .grid-container {
+                flex-direction: column;
+                display: flex;
+            }
+
+            .profile-pic-container,
+            .name-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="resume-container">
+        <!-- Top Section -->
+        <div class="top-section">
+            <div class="profile-pic-container">
+
+                <div class="deco-dot"
+                    style="bottom: 10px; left: -10px; width: 35px; height: 35px; background: #F8D8DC; color: white;">✖
+                </div>
+            </div>
+            <div class="name-card">
+                <div class="hello-pill">Hello! My name</div>
+                <h1>Phattharacharin<br>Khamsitha</h1>
+                <h2>Computer Science Student</h2>
+                <div class="contact-info">
+                    <div class="contact-pill">061 604 1471</div>
+                    <div class="contact-pill outline">phattharacharin.k@ku.th</div>
+                </div>
+                <div style="margin-top: 10px; font-weight: 600; font-size: 0.9rem;">
+                    Nakhon Pathom, Thailand
+                </div>
+                <div style="position: absolute; right: 30px; top: 40px; font-size: 1.5rem; color: #1a1a1a;">♥</div>
+            </div>
+        </div>
+
+        <!-- About Me -->
+        <div class="card" style="border-top-right-radius: 60px; border-bottom-left-radius: 60px;">
+            <div class="section-title">About Me</div>
+            <div class="deco-dot deco-heart">♥</div>
+            <div class="about-text">
+                อายุ 22 ปี (เกิด 14 ธันวาคม 2004)<br>
+                กำลังศึกษาในระดับปริญญาตรี คณะศิลปศาสตร์และวิทยาศาสตร์ สาขาวิทยาการคอมพิวเตอร์ (Computer Science)<br>
+                มีความสนใจและเชี่ยวชาญด้าน 3D Interactive Graphics และ Computer Science Algorithms.
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div class="grid-container">
+            <!-- Left Column: Skills & Experience -->
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+                <div class="card" style="flex: 1; border-top-left-radius: 80px; border-bottom-left-radius: 80px;">
+                    <div class="section-title">Skills & Algos</div>
+                    <div class="card-content" style="margin-top: 15px;">
+                        <div class="skill-item">
+                            <h4>Raster Graphics Functions</h4>
+                            <ul>
+                                <li>putPixel() - วาดพิกเซลทีละจุด</li>
+                                <li>drawSprite24Bit() - วาด Sprite สี 24-bit (RGB)</li>
+                                <li>3D Ray-Plane Interactive Color Picking</li>
+                            </ul>
+                        </div>
+                        <div class="skill-item" style="margin-top: 30px;">
+                            <h4>3D Perspective Transformation</h4>
+                            <ul>
+                                <li>Translation (X, Y)</li>
+                                <li>3D Rotation Matrix (Pitch, Yaw, Roll)</li>
+                                <li>Ultra Scaling (0.3x - 10.0x)</li>
+                                <li>3D Perspective Ray Casting Backward Mapping</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Education & 3D Interactive -->
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+                <div class="card" style="border-top-right-radius: 80px; padding-bottom: 30px;">
+                    <div class="section-title">Education</div>
+                    <div class="deco-dot deco-flower">✿</div>
+                    <div class="card-content" style="margin-top: 15px;">
+                        <h3>Kasetsart University<br>Kamphaeng Saen</h3>
+                        <div class="date">Present</div>
+                        <p style="font-size: 0.95rem; font-weight: 500; line-height: 1.5;">
+                            Bachelor Degree of Computer Science<br>
+                            คณะศิลปศาสตร์และวิทยาศาสตร์<br>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card" style="flex: 1; border-bottom-right-radius: 80px;">
+                    <div class="section-title">3D Canvas</div>
+                    <div class="graphics-section">
+                        <canvas id="canvas" width="200" height="200"></canvas>
+                        <div class="controls">
+                            <p><strong>⌨️ Keyboard Controls</strong></p>
+                            <p><span class="key">W</span> <span class="key">A</span> <span class="key">S</span> <span
+                                    class="key">D</span> : Move</p>
+                            <p><span class="key">I</span> <span class="key">K</span> : Pitch | <span
+                                    class="key">J</span> <span class="key">L</span> : Yaw</p>
+                            <p><span class="key">←</span> <span class="key">→</span> : Roll | <span class="key">↑</span>
+                                <span class="key">↓</span> : Scale
+                            </p>
+                            <p style="margin-top: 8px; color: #1a1a1a; font-size: 0.8rem; font-weight: 800;">💡 Click
+                                Canvas to Auto-Rotate</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const imageData = ctx.createImageData(canvas.width, canvas.height);
+        const pixels = imageData.data;
+
+        // 1. ตั้งค่าจานสี (Palette) ระบุว่าเลขไหนคือสีอะไร
+        const palette = {
+            0: null,       // 0 = โปร่งใส (ปล่อยทะลุ)
+            1: 0x111827,   // 1 = สีดำ (เส้นขอบ, ตา)
+            2: 0xFDE047,   // 2 = สีเหลือง (สีหน้ายิ้ม)
+            3: 0xEF4444,   // 3 = สีแดง (แก้มแดง, หัวใจ, หมวกเห็ด)
+            4: 0x3B82F6,   // 4 = สีน้ำเงิน (ดาบ, จุดเห็ด)
+            5: 0x10B981,   // 5 = สีเขียว (เอเลี่ยน)
+            6: 0xF97316,   // 6 = สีส้ม (ตัวรถ)
+            7: 0xFFFFFF    // 7 = สีขาว (ตา, กระจก)
+        };
+
+        // 2. รูปทรงที่จะวาด 3 มิติ (รูปรถการ์ตูนน่ารัก)
+        const mySprite = [
+            [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+            [0, 0, 0, 1, 6, 6, 6, 6, 6, 6, 6, 1, 0, 0, 0],
+            [0, 0, 1, 7, 7, 7, 1, 7, 7, 7, 7, 7, 1, 0, 0],
+            [0, 1, 7, 7, 7, 7, 1, 7, 1, 7, 7, 1, 7, 1, 0],
+            [1, 6, 6, 6, 6, 6, 1, 6, 6, 6, 6, 6, 6, 6, 1],
+            [1, 1, 1, 6, 6, 1, 6, 1, 1, 6, 1, 1, 6, 6, 1],
+            [0, 1, 7, 1, 6, 6, 6, 6, 6, 6, 6, 6, 1, 7, 1],
+            [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1]
+        ];
+
+        let posX = canvas.width / 2;
+        let posY = canvas.height / 2;
+        let rotPitch = 0; // หมุนพับ 3D ขึ้น-ลง (X-Axis)
+        let rotYaw = 0;   // หมุนหัน 3D ซ้าย-ขวา (Y-Axis)
+        let rotRoll = 0;  // หมุน 2D (Z-Axis)
+        let scale = 3.0;  // ค่าเริ่มต้นใหญ่ขึ้น
+        const f = 180;    // Focal Length (ระยะ Perspective กล้อง)
+        const keys = {};
+        let isAutoRotating = true;
+
+        function putPixel(x, y, r, g, b, a = 255) {
+            if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
+            const idx = (y * canvas.width + x) * 4;
+            pixels[idx] = r;
+            pixels[idx + 1] = g;
+            pixels[idx + 2] = b;
+            pixels[idx + 3] = a;
+        }
+
+        function fillBackground(r, g, b) {
+            for (let i = 0; i < pixels.length; i += 4) {
+                pixels[i] = r;
+                pixels[i + 1] = g;
+                pixels[i + 2] = b;
+                pixels[i + 3] = 0;
+            }
+        }
+
+        // =========================================================
+        // 3D Perspective Ray-Plane Rendering Algorithm
+        // =========================================================
+        function drawSpriteWithTransform3D(sprite, centerX, centerY, pitch, yaw, roll, scaleVal) {
+            if (scaleVal <= 0.1) return;
+
+            const spriteW = sprite[0].length;
+            const spriteH = sprite.length;
+
+            const rx = pitch * Math.PI / 180;
+            const ry = yaw * Math.PI / 180;
+            const rz = roll * Math.PI / 180;
+
+            const cx = Math.cos(rx), sx = Math.sin(rx);
+            const cy = Math.cos(ry), sy = Math.sin(ry);
+            const cz = Math.cos(rz), sz = Math.sin(rz);
+
+            // 3D Matrix Axes (U, V, Normal)
+            const Ux = cz * cy;
+            const Uy = sz * cy;
+            const Uz = -sy;
+
+            const Vx = cz * sy * sx - sz * cx;
+            const Vy = sz * sy * sx + cz * cx;
+            const Vz = cy * sx;
+
+            const Nx = cz * sy * cx + sz * sx;
+            const Ny = sz * sy * cx - cz * sx;
+            const Nz = cy * cx;
+
+            const maxRange = Math.ceil(Math.max(spriteW, spriteH) * scaleVal * 2.5);
+
+            for (let screenY = centerY - maxRange; screenY <= centerY + maxRange; screenY++) {
+                for (let screenX = centerX - maxRange; screenX <= centerX + maxRange; screenX++) {
+                    const dx = screenX - centerX;
+                    const dy = screenY - centerY;
+
+                    const dotDN = dx * Nx + dy * Ny + f * Nz;
+                    if (Math.abs(dotDN) < 0.0001) continue;
+
+                    const t = (f * Nz) / dotDN;
+                    if (t <= 0) continue;
+
+                    const hx = t * dx;
+                    const hy = t * dy;
+                    const hz = t * f - f;
+
+                    const uLocal = hx * Ux + hy * Uy + hz * Uz;
+                    const vLocal = hx * Vx + hy * Vy + hz * Vz;
+
+                    const spriteX = Math.floor(uLocal / scaleVal + spriteW / 2);
+                    const spriteY = Math.floor(vLocal / scaleVal + spriteH / 2);
+
+                    if (spriteY >= 0 && spriteY < spriteH && spriteX >= 0 && spriteX < spriteW) {
+                        const color = sprite[spriteY][spriteX];
+                        if (color !== null) {
+                            if (typeof color === 'number') {
+                                putPixel(screenX, screenY, (color >> 16) & 255, (color >> 8) & 255, color & 255);
+                            } else if (Array.isArray(color)) {
+                                putPixel(screenX, screenY, color[0], color[1], color[2]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // Auto Rotation Toggle on Click
+        canvas.addEventListener('click', () => {
+            isAutoRotating = !isAutoRotating;
+        });
+
+        canvas.addEventListener('wheel', (event) => {
+            event.preventDefault();
+            if (event.deltaY < 0) {
+                scale += 0.2;
+            } else {
+                scale -= 0.2;
+            }
+            scale = Math.max(0.3, Math.min(10.0, scale));
+        }, { passive: false });
+
+        document.addEventListener('keydown', (e) => keys[e.key] = true);
+        document.addEventListener('keyup', (e) => keys[e.key] = false);
+
+        function update() {
+            if (isAutoRotating) {
+                rotPitch -= 1.5;
+                rotYaw += 1.5;
+            }
+
+            // ย่อ / ขยายได้สูงสุดถึง 10 เท่า (10.0)
+            if (keys['ArrowUp']) scale += 0.1;
+            if (keys['ArrowDown']) scale -= 0.1;
+            scale = Math.max(0.3, Math.min(10.0, scale));
+
+            // หมุน 2D (Roll)
+            if (keys['ArrowLeft']) rotRoll -= 4;
+            if (keys['ArrowRight']) rotRoll += 4;
+
+            // หมุน 3D พับไปข้างหลัง / หน้า (Pitch)
+            if (keys['i'] || keys['I']) rotPitch -= 4;
+            if (keys['k'] || keys['K']) rotPitch += 4;
+
+            // หมุน 3D หันซ้าย / ขวา (Yaw)
+            if (keys['j'] || keys['J']) rotYaw -= 4;
+            if (keys['l'] || keys['L']) rotYaw += 4;
+
+            // Translation (WASD)
+            if (keys['w'] || keys['W']) posY -= 3;
+            if (keys['s'] || keys['S']) posY += 3;
+            if (keys['a'] || keys['A']) posX -= 3;
+            if (keys['d'] || keys['D']) posX += 3;
+
+            posX = Math.max(-50, Math.min(canvas.width + 50, posX));
+            posY = Math.max(-50, Math.min(canvas.height + 50, posY));
+        }
+
+        function animate() {
+            fillBackground(255, 255, 255);
+            update();
+            drawSpriteWithTransform3D(mySprite, posX, posY, rotPitch, rotYaw, rotRoll, scale);
+            ctx.putImageData(imageData, 0, 0);
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+
+</html>

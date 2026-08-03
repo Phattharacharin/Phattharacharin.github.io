@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Rotating Cube</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        canvas {
+            background-color: #000;
+            border: 2px solid #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <h2>3D Rotating Box (Exported style)</h2>
+    <canvas id="canvas" width="600" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // นี่คือ Array ที่จำลองการ Export มาจาก Blender (เหมือนโค้ดของคุณเป๊ะๆ)
+        const vertices = [-1, -1, 1, 1, -1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, -1, 1, 1, 1, -1, -1, -1, -1, -1, -1, 1, -1, 1, -1, -1, -1, 1, -1, 1, 1, -1, -1, -1, -1, -1, -1, 1, -1, 1, 1, -1, -1, -1, -1, 1, 1, -1, 1, -1, 1, -1, 1, 1, -1, -1, 1, 1, -1, 1, -1, 1, 1, 1, -1, 1, 1, 1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, -1, -1, 1, -1, -1, -1, -1, 1, -1, -1, 1, -1, 1, -1, -1, -1, 1, -1, 1, -1, -1, 1];
+
+        let angleX = 0;
+        let angleY = 0;
+
+        function draw() {
+            // ล้างหน้าจอ
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // คำนวณ Sin/Cos สำหรับการหมุน
+            const cosX = Math.cos(angleX);
+            const sinX = Math.sin(angleX);
+            const cosY = Math.cos(angleY);
+            const sinY = Math.sin(angleY);
+
+            // ตั้งค่ามุมมอง
+            const fov = 300;
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            // วาดรูปสามเหลี่ยมทีละรูป (1 รูป = 3 จุด = 9 ตัวเลข)
+            for (let i = 0; i < vertices.length; i += 9) {
+                let points2D = [];
+
+                for (let j = 0; j < 3; j++) {
+                    let x = vertices[i + j*3];
+                    let y = vertices[i + j*3 + 1];
+                    let z = vertices[i + j*3 + 2];
+
+                    // หมุนรอบแกน X
+                    let y1 = y * cosX - z * sinX;
+                    let z1 = y * sinX + z * cosX;
+
+                    // หมุนรอบแกน Y
+                    let x2 = x * cosY + z1 * sinY;
+                    let z2 = -x * sinY + z1 * cosY;
+
+                    // เลื่อนวัตถุออกไปข้างหน้ากล้อง
+                    z2 += 4; 
+
+                    // 3D Projection (เปลี่ยน 3D เป็น 2D หน้าจอ)
+                    let projX = (x2 / z2) * fov + cx;
+                    let projY = (y1 / z2) * fov + cy;
+                    
+                    points2D.push({x: projX, y: projY});
+                }
+
+                // สุ่มสีให้แต่ละหน้าเพื่อให้มองเห็นกล่องเป็นมิติ (หรือกำหนดสีตาม index)
+                const hue = (i / 9) * 30;
+                ctx.fillStyle = `hsl(${hue}, 70%, 50%)`;
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+
+                ctx.beginPath();
+                ctx.moveTo(points2D[0].x, points2D[0].y);
+                ctx.lineTo(points2D[1].x, points2D[1].y);
+                ctx.lineTo(points2D[2].x, points2D[2].y);
+                ctx.closePath();
+                
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            angleX += 0.01;
+            angleY += 0.015;
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

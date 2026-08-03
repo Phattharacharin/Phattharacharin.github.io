@@ -1,0 +1,22 @@
+
+<html>
+<head>
+<title>Raster Graphics</title>
+</head>
+<body>
+<canvas id="canvas" width="200" height="200"
+style="width:500px; height:500px; border:1px solid #000; image-rendering: pixelated;">
+</canvas>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const imageData = ctx.createImageData(canvas.width, canvas.height);
+const pixels = imageData.data; // Array of color [R,G,B,A, R,G,B,A, ...]
+
+
+
+
+ctx.putImageData(imageData, 0, 0);
+</script>
+</body>
+</html>

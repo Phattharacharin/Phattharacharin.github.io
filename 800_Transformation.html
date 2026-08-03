@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Raster Graphics - Perfect Pixel Scaling</title>
+</head>
+<body>
+
+<canvas id="canvas" width="200" height="200"
+style="width:500px; height:500px; border:1px solid #000; image-rendering: pixelated;">
+</canvas>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const imageData = ctx.createImageData(canvas.width, canvas.height);
+const pixels = imageData.data; // Array of color [R,G,B,A, R,G,B,A, ...]
+
+function putPixel(x, y, r, g, b, a = 255) {
+  if (x < 0 || x >= canvas.width || y < 0 || y >= canvas.height) return;
+  const idx = (y * canvas.width + x) * 4; 
+  pixels[idx] = r;
+  pixels[idx + 1] = g;
+  pixels[idx + 2] = b;
+  pixels[idx + 3] = a;
+}
+
+function drawRectFilled(x1, y1, x2, y2, r, g, b, a = 255) {
+  for (let y = y1; y <= y2; y++) {
+    for (let x = x1; x <= x2; x++) {
+      putPixel(x, y, r, g, b, a);
+    }
+  }
+}
+
+// ฟังก์ชันวาดแบบระดับโปร (Backward Mapping): ซูมเท่าไหร่เส้นก็หนาเท่ากัน คมชัด ไม่แตกกระจาย
+function drawSpritePerfect(sprite, cx, cy, degree, scale, r, g, b, a = 255) {
+  // หากสเกลเล็กเกินไปจนมองไม่เห็น ให้ข้ามไป
+  if (scale <= 0.1) return;
+
+  // กลับทิศทางมุม (Negative Angle) เพื่อใช้สำหรับคำนวณย้อนกลับจากจอไปหารูปภาพ
+  const rad = -degree * Math.PI / 180;
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+
+  const spriteW = sprite[0].length;
+  const spriteH = sprite.length;
+  
+  // คำนวณขนาดกรอบบนหน้าจอที่จะต้องสแกนพิกเซล (ตามขนาดสเกลปัจจุบัน)
+  const maxDim = Math.max(spriteW, spriteH);
+  const boundingSize = Math.ceil(maxDim * scale * 0.75);
+  
+  // วนลูปตรวจสอบพิกเซลบนหน้าจอ Canvas ทีละเม็ดในขอบเขตของรูป
+  for (let screenY = cy - boundingSize; screenY <= cy + boundingSize; screenY++) {
+    for (let screenX = cx - boundingSize; screenX <= cx + boundingSize; screenX++) {
+      
+      // 1. ย้ายจุดพิกัดหน้าจอให้สัมพันธ์กับจุดศูนย์กลาง (cx, cy)
+      const dx = screenX - cx;
+      const dy = screenY - cy;
+
+      // 2. หมุนพิกัดย้อนกลับ (Inverse Rotation)
+      const rotX = dx * cos - dy * sin;
+      const rotY = dx * sin + dy * cos;
+
+      // 3. หารสเกลย้อนกลับ (Inverse Scale) และเลื่อนจุดไปหาตำแหน่งพิกเซลจริงใน Sprite
+      // ใช้ Math.floor เพื่อทำ Nearest Neighbor Interpolation (คงความคมของ Pixel Art)
+      const spriteX = Math.floor(rotX / scale + spriteW / 2);
+      const spriteY = Math.floor(rotY / scale + spriteH / 2);
+
+      // 4. ถ้าจุดที่คำนวณได้ย้อนกลับไปตกลงบนพิกเซลที่เป็นตัวการ์ตูน (เลข 1) ให้ระบายสีทันที
+      if (spriteY >= 0 && spriteY < spriteH && spriteX >= 0 && spriteX < spriteW) {
+        if (sprite[spriteY][spriteX] === 1) {
+          putPixel(screenX, screenY, r, g, b, a);
+        }
+      }
+    }
+  }
+}
+
+function drawSprite24Bit(sprite, x, y) {
+  for (let j = 0; j < sprite.length; j++) {
+    for (let i = 0; i < sprite[j].length; i++) {
+      const color = sprite[j][i];
+      if (color !== null) {
+        const r = (color >> 16) & 255;
+        const g = (color >> 8) & 255;
+        const b = color & 255;
+        putPixel(x + i, y + j, r, g, b);
+      }
+    }
+  }
+}
+// ฟังก์ชันใหม่: วาดรูปสีกราฟิก 24-Bit แบบขยายสเกลแล้วเนื้อแน่น เส้นหนาชัดเจน ไม่แตก
+function drawSprite24BitPerfect(sprite, cx, cy, degree, scale) {
+  if (scale <= 2) return;
+
+  const rad = -degree * Math.PI / 180;
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+
+  const spriteW = sprite[0].length;
+  const spriteH = sprite.length;
+  
+  const maxDim = Math.max(spriteW, spriteH);
+  const boundingSize = Math.ceil(maxDim * scale * 1.9);
+  
+  for (let screenY = cy - boundingSize; screenY <= cy + boundingSize; screenY++) {
+    for (let screenX = cx - boundingSize; screenX <= cx + boundingSize; screenX++) {
+      
+      const dx = screenX - cx;
+      const dy = screenY - cy;
+
+      const rotX = dx * cos - dy * sin;
+      const rotY = dx * sin + dy * cos;
+
+      const spriteX = Math.floor(rotX / scale + spriteW / 2);
+      const spriteY = Math.floor(rotY / scale + spriteH / 2);
+
+      if (spriteY >= 0 && spriteY < spriteH && spriteX >= 0 && spriteX < spriteW) {
+        const color = sprite[spriteY][spriteX];
+        // ถ้าพิกเซลนั้นมีสี (ไม่ใช่ null) ให้ถอดรหัสสีแล้ววาดลงจอ
+        if (color !== null) {
+          const r = (color >> 16) & 255;
+          const g = (color >> 8) & 255;
+          const b = color & 255;
+          putPixel(screenX, screenY, r, g, b);
+        }
+      }
+    }
+  }
+}
+
+const smileSprite16x16 = [
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0],
+            [0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+            [0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0],
+            [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+            [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+            [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        ];
+
+const _ = null;
+const K = 0x111827; // ขอบดำ / หน้า
+const Y = 0xFDE047; // สีเหลืองพื้นฐาน
+const YL = 0xFEF08A; // สีเหลืองอ่อน (แสง)
+const YD = 0xD97706; // สีส้ม (เงา)
+const BR = 0xB45309; // ขอบน้ำตาล
+
+const smileSprite24Bit = [
+  [ _,  _,  _,  _,  _, BR, YD, YD, YD, YD, BR,  _,  _,  _,  _,  _],
+  [ _,  _,  _, BR, YD, YL, YL, YL, YL, YL, YL, YD, BR,  _,  _,  _],
+  [ _,  _, BR, YD, YL, YL, YL, YL, YL, YL, YL, YL, YD, BR,  _,  _],
+  [ _, BR, YD, YL, Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  YL, YD, BR,  _],
+  [ _, YD, YL, Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  YL, YD,  _],
+  [BR, YD, YL, Y,  K,  K,  Y,  Y,  Y,  Y,  K,  K,  Y,  YL, YD, BR],
+  [YD, YL, Y,  Y,  K,  K,  Y,  Y,  Y,  Y,  K,  K,  Y,  Y,  YL, YD],
+  [YD, YL, Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  YL, YD],
+  [YD, YL, Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  YL, YD],
+  [YD, YL, Y,  Y,  K,  Y,  Y,  Y,  Y,  Y,  Y,  K,  Y,  Y,  YL, YD],
+  [BR, YD, YL, Y,  Y,  K,  Y,  Y,  Y,  Y,  K,  Y,  Y,  YL, YD, BR],
+  [ _, YD, YL, Y,  Y,  Y,  K,  K,  K,  K,  Y,  Y,  Y,  YL, YD,  _],
+  [ _, BR, YD, YL, Y,  Y,  Y,  Y,  Y,  Y,  Y,  Y,  YL, YD, BR,  _],
+  [ _,  _, BR, YD, YL, Y,  Y,  Y,  Y,  Y,  Y,  YL, YD, BR,  _,  _],
+  [ _,  _,  _, BR, YD, YL, YL, YL, YL, YL, YL, YD, BR,  _,  _,  _],
+  [ _,  _,  _,  _,  _, BR, YD, YD, YD, YD, BR,  _,  _,  _,  _,  _]
+];
+
+// ตัวแปรควบคุมแอนิเมชันอัตโนมัติ
+let autoDegree = 0; 
+let timeValue = 0;  
+
+function animate() {
+  // 1. ล้างหน้าจอเป็นสีขาว
+  drawRectFilled(0, 0, canvas.width - 1, canvas.height - 1, 255, 255, 255); 
+  
+  // 2. รูปยิ้มสีเหลือง 24-Bit 
+  drawSprite24BitPerfect(smileSprite24Bit, 160, 140, 0, 3.0); 
+  
+  // 3. ปรับตรงนี้เพื่อเพิ่มความหนา!! 
+  // (ของเดิม: 3.5 + Math.sin(timeValue) * 2.0)
+  // เปลี่ยนเป็นคำนวณด้านล่างนี้:
+  let perfectScale = 2.0 + Math.sin(timeValue) * 5.0; 
+  
+  // 4. วาดรูปยิ้มสีน้ำเงินตรงกลาง
+  drawSpritePerfect(smileSprite16x16, 100, 100, autoDegree, perfectScale, 0, 0, 255); 
+  
+  ctx.putImageData(imageData, 0, 0);
+
+  autoDegree += 1;     
+  timeValue += 0.04;   
+  if (autoDegree >= 360) autoDegree = 0;
+
+  requestAnimationFrame(animate);
+}
+animate();
+
+</script>
+</body>
+</html>

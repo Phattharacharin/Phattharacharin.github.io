@@ -1,0 +1,25 @@
+function multiplyMatrix(matrixA, matrixB) {
+  const rowsA = matrixA.length;
+  const columnsA = matrixA[0].length;
+  const rowsB = matrixB.length;
+  const columnsB = matrixB[0].length;
+
+  if (columnsA !== rowsB) {
+    throw new Error('จำนวน column ของ matrixA ต้องเท่ากับจำนวน row ของ matrixB');
+  }
+
+  const result = Array.from(
+    { length: rowsA },
+    () => Array(columnsB).fill(0)
+  );
+
+  for (let row = 0; row < rowsA; row++) {
+    for (let column = 0; column < columnsB; column++) {
+      for (let k = 0; k < columnsA; k++) {
+        result[row][column] += matrixA[row][k] * matrixB[k][column];
+      }
+    }
+  }
+
+  return result;
+}
