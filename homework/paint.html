@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,70 +11,30 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
             font-family: 'Segoe UI', Tahoma, sans-serif;
             background: #c0c0c0;
             user-select: none;
         }
 
-        /* ===== Window Frame ===== */
+        /* ===== Full Screen Layout ===== */
         .window {
-            width: 900px;
-            margin: 30px auto;
-            border: 2px solid #000;
-            background: #c0c0c0;
-            box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
-        }
-
-        .title-bar {
-            background: linear-gradient(90deg, #000080, #1084d0);
-            color: #fff;
-            padding: 3px 5px;
-            font-size: 13px;
-            font-weight: bold;
+            width: 100%;
+            height: 100vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .title-bar-buttons {
-            display: flex;
-            gap: 2px;
-        }
-
-        .title-bar-buttons button {
-            width: 16px;
-            height: 14px;
-            font-size: 9px;
-            border: 1px outset #ccc;
+            flex-direction: column;
+            border: none;
             background: #c0c0c0;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-        }
-
-        /* ===== Menu Bar ===== */
-        .menu-bar {
-            background: #c0c0c0;
-            padding: 2px 5px;
-            font-size: 12px;
-            border-bottom: 1px solid #808080;
-        }
-
-        .menu-bar span {
-            margin-right: 12px;
-            cursor: default;
-        }
-
-        .menu-bar span:first-child u {
-            text-decoration: underline;
         }
 
         /* ===== Main Layout ===== */
         .main-area {
             display: flex;
+            flex: 1;
+            min-height: 0;
         }
 
         /* ===== Tool Panel ===== */
@@ -88,6 +47,7 @@
             flex-direction: column;
             align-items: center;
             gap: 2px;
+            flex-shrink: 0;
         }
 
         .tool-grid {
@@ -128,7 +88,7 @@
             white-space: nowrap;
             z-index: 999;
             pointer-events: none;
-            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
 
         .tool-btn.active {
@@ -179,20 +139,64 @@
             border-radius: 1px;
         }
 
+        /* ===== Eraser Size Selector ===== */
+        .eraser-size-panel {
+            margin-top: 6px;
+            width: 52px;
+            border: 1px inset #808080;
+            background: #fff;
+            padding: 5px 3px;
+            display: none;
+        }
+
+        .eraser-size-panel.visible {
+            display: block;
+        }
+
+        .eraser-size-option {
+            width: 100%;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent;
+            margin: 2px 0;
+        }
+
+        .eraser-size-option:hover {
+            background: #e0e0ff;
+        }
+
+        .eraser-size-option.active {
+            background: #000080;
+        }
+
+        .eraser-size-option.active .eraser-circle {
+            background: #fff;
+        }
+
+        .eraser-circle {
+            background: #000;
+            border-radius: 50%;
+        }
+
         /* ===== Canvas ===== */
         .canvas-container {
             flex: 1;
             background: #808080;
-            padding: 4px;
-            overflow: auto;
-            height: 530px;
+            padding: 2px;
+            overflow: hidden;
+            display: flex;
+            min-width: 0;
         }
 
         #paintCanvas {
             background: #ffffff;
             cursor: crosshair;
             display: block;
-            image-rendering: auto;
+            width: 100%;
+            height: 100%;
         }
 
         /* ===== Color Palette ===== */
@@ -203,34 +207,16 @@
             background: #c0c0c0;
             border-top: 1px solid #808080;
             gap: 8px;
+            flex-shrink: 0;
         }
 
-        .current-colors {
-            position: relative;
-            width: 32px;
-            height: 32px;
-            margin-right: 6px;
-        }
-
-        .bg-color-box {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 20px;
-            height: 20px;
-            border: 1px solid #808080;
-            background: #fff;
-        }
-
-        .fg-color-box {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 20px;
-            height: 20px;
-            border: 1px solid #808080;
+        .current-color-box {
+            width: 28px;
+            height: 28px;
+            border: 2px solid #808080;
             background: #000;
-            z-index: 1;
+            margin-right: 6px;
+            box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #fff;
         }
 
         .palette {
@@ -251,6 +237,11 @@
             border-color: #fff;
         }
 
+        .palette-color.selected {
+            border: 2px solid #fff;
+            outline: 1px solid #000;
+        }
+
         /* ===== Status Bar ===== */
         .status-bar {
             background: #c0c0c0;
@@ -259,6 +250,7 @@
             font-size: 11px;
             display: flex;
             justify-content: space-between;
+            flex-shrink: 0;
         }
 
         .status-bar .coords {
@@ -267,352 +259,388 @@
         }
     </style>
 </head>
-
 <body>
 
-    <div class="window">
-        <!-- Title Bar -->
-        <div class="title-bar">
-            <span>Paint - Assignment #2</span>
-            <div class="title-bar-buttons">
-                <button>_</button>
-                <button>□</button>
-                <button>✕</button>
+<div class="window">
+    <!-- Main Area -->
+    <div class="main-area">
+        <!-- Tool Panel -->
+        <div class="tool-panel">
+            <div class="tool-grid">
+                <!-- Pencil -->
+                <button class="tool-btn active" id="toolPencil" data-tooltip="ดินสอ (Pencil)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                    </svg>
+                </button>
+                <!-- Eraser -->
+                <button class="tool-btn" id="toolEraser" data-tooltip="ยางลบ (Eraser)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="12" width="18" height="8" rx="1"/>
+                        <path d="M3 16h18"/>
+                    </svg>
+                </button>
+                <!-- Line -->
+                <button class="tool-btn" id="toolLine" data-tooltip="วาดเส้น (Line)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" y1="20" x2="20" y2="4"/>
+                    </svg>
+                </button>
+                <!-- Rectangle -->
+                <button class="tool-btn" id="toolRect" data-tooltip="สี่เหลี่ยม (Rectangle)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="5" width="18" height="14" rx="0"/>
+                    </svg>
+                </button>
+                <!-- Ellipse -->
+                <button class="tool-btn" id="toolEllipse" data-tooltip="วงรี (Ellipse)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <ellipse cx="12" cy="12" rx="10" ry="7"/>
+                    </svg>
+                </button>
             </div>
-        </div>
 
-        <!-- Menu Bar -->
-        <div class="menu-bar">
-            <span><u>F</u>ile</span>
-            <span><u>E</u>dit</span>
-            <span><u>V</u>iew</span>
-            <span><u>I</u>mage</span>
-            <span><u>O</u>ptions</span>
-            <span><u>H</u>elp</span>
-        </div>
-
-        <!-- Main Area -->
-        <div class="main-area">
-            <!-- Tool Panel -->
-            <div class="tool-panel">
-                <div class="tool-grid">
-                    <!-- Pencil -->
-                    <button class="tool-btn active" id="toolPencil" data-tooltip="ดินสอ (Pencil)">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                        </svg>
-                    </button>
-                    <!-- Eraser -->
-                    <button class="tool-btn" id="toolEraser" data-tooltip="ยางลบ (Eraser)">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="12" width="18" height="8" rx="1" />
-                            <path d="M3 16h18" />
-                        </svg>
-                    </button>
-                    <!-- Line -->
-                    <button class="tool-btn" id="toolLine" data-tooltip="วาดเส้น (Line)">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="4" y1="20" x2="20" y2="4" />
-                        </svg>
-                    </button>
-                    <!-- Rectangle -->
-                    <button class="tool-btn" id="toolRect" data-tooltip="สี่เหลี่ยม (Rectangle)">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="5" width="18" height="14" rx="0" />
-                        </svg>
-                    </button>
-                    <!-- Ellipse -->
-                    <button class="tool-btn" id="toolEllipse" data-tooltip="วงรี (Ellipse)">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <ellipse cx="12" cy="12" rx="10" ry="7" />
-                        </svg>
-                    </button>
+            <!-- Line Width -->
+            <div class="line-width-panel">
+                <div class="line-width-option active" data-width="1">
+                    <div class="lw-line" style="width:80%; height:1px;"></div>
                 </div>
-
-                <!-- Line Width -->
-                <div class="line-width-panel">
-                    <div class="line-width-option active" data-width="1">
-                        <div class="lw-line" style="width:80%; height:1px;"></div>
-                    </div>
-                    <div class="line-width-option" data-width="2">
-                        <div class="lw-line" style="width:80%; height:2px;"></div>
-                    </div>
-                    <div class="line-width-option" data-width="3">
-                        <div class="lw-line" style="width:80%; height:3px;"></div>
-                    </div>
-                    <div class="line-width-option" data-width="5">
-                        <div class="lw-line" style="width:80%; height:5px;"></div>
-                    </div>
-                    <div class="line-width-option" data-width="8">
-                        <div class="lw-line" style="width:80%; height:8px;"></div>
-                    </div>
+                <div class="line-width-option" data-width="2">
+                    <div class="lw-line" style="width:80%; height:2px;"></div>
+                </div>
+                <div class="line-width-option" data-width="3">
+                    <div class="lw-line" style="width:80%; height:3px;"></div>
+                </div>
+                <div class="line-width-option" data-width="5">
+                    <div class="lw-line" style="width:80%; height:5px;"></div>
+                </div>
+                <div class="line-width-option" data-width="8">
+                    <div class="lw-line" style="width:80%; height:8px;"></div>
                 </div>
             </div>
 
-            <!-- Canvas -->
-            <div class="canvas-container">
-                <canvas id="paintCanvas" width="780" height="520"></canvas>
+            <!-- Eraser Size -->
+            <div class="eraser-size-panel" id="eraserSizePanel">
+                <div class="eraser-size-option active" data-esize="4">
+                    <div class="eraser-circle" style="width:6px; height:6px;"></div>
+                </div>
+                <div class="eraser-size-option" data-esize="8">
+                    <div class="eraser-circle" style="width:10px; height:10px;"></div>
+                </div>
+                <div class="eraser-size-option" data-esize="16">
+                    <div class="eraser-circle" style="width:16px; height:16px;"></div>
+                </div>
+                <div class="eraser-size-option" data-esize="28">
+                    <div class="eraser-circle" style="width:22px; height:22px;"></div>
+                </div>
             </div>
         </div>
 
-        <!-- Color Bar -->
-        <div class="color-bar">
-            <div class="current-colors">
-                <div class="fg-color-box" id="fgColorBox"></div>
-                <div class="bg-color-box" id="bgColorBox"></div>
-            </div>
-            <div class="palette" id="palette"></div>
-        </div>
-
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <span id="statusMsg">For Help, click Help Topics on the Help Menu.</span>
-            <span class="coords" id="statusCoords"></span>
+        <!-- Canvas -->
+        <div class="canvas-container">
+            <canvas id="paintCanvas"></canvas>
         </div>
     </div>
 
-    <script>
-        // ===== Canvas Setup =====
-        const canvas = document.getElementById('paintCanvas');
-        const ctx = canvas.getContext('2d');
+    <!-- Color Bar -->
+    <div class="color-bar">
+        <div class="current-color-box" id="currentColorBox"></div>
+        <div class="palette" id="palette"></div>
+    </div>
 
-        // ===== State =====
-        let currentTool = 'pencil';
-        let isDrawing = false;
-        let startX, startY;
-        let lastX, lastY;
-        let fgColor = '#000000';
-        let bgColor = '#ffffff';
-        let lineWidth = 1;
-        let savedImageData = null;
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <span id="statusMsg">เครื่องมือ: ดินสอ (Pencil)</span>
+        <span class="coords" id="statusCoords"></span>
+    </div>
+</div>
 
-        // ===== Color Palette (Classic MS Paint) =====
-        const paletteColors = [
-            '#000000', '#808080', '#800000', '#808000', '#008000', '#008080', '#000080', '#800080',
-            '#808040', '#004040', '#0080ff', '#004080', '#4000ff', '#804000',
-            '#ffffff', '#c0c0c0', '#ff0000', '#ffff00', '#00ff00', '#00ffff', '#0000ff', '#ff00ff',
-            '#ffff80', '#00ff80', '#80ffff', '#8080ff', '#ff0080', '#ff8040'
-        ];
+<script>
+    // ===== Canvas Setup =====
+    const canvas = document.getElementById('paintCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.querySelector('.canvas-container');
 
-        // Build palette
-        const paletteEl = document.getElementById('palette');
-        paletteColors.forEach(color => {
-            const swatch = document.createElement('div');
-            swatch.className = 'palette-color';
-            swatch.style.background = color;
-            swatch.addEventListener('click', () => {
-                fgColor = color;
-                document.getElementById('fgColorBox').style.background = fgColor;
-            });
-            swatch.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                bgColor = color;
-                document.getElementById('bgColorBox').style.background = bgColor;
-            });
-            paletteEl.appendChild(swatch);
-        });
-
-        // ===== Tool Selection =====
-        const toolBtns = document.querySelectorAll('.tool-btn');
-        const toolMap = {
-            toolPencil: 'pencil',
-            toolEraser: 'eraser',
-            toolLine: 'line',
-            toolRect: 'rect',
-            toolEllipse: 'ellipse'
-        };
-
-        toolBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                toolBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentTool = toolMap[btn.id];
-                updateStatus();
-            });
-        });
-
-        // ===== Line Width Selection =====
-        const lwOptions = document.querySelectorAll('.line-width-option');
-        lwOptions.forEach(opt => {
-            opt.addEventListener('click', () => {
-                lwOptions.forEach(o => o.classList.remove('active'));
-                opt.classList.add('active');
-                lineWidth = parseInt(opt.dataset.width);
-            });
-        });
-
-        // ===== Drawing Functions =====
-
-        function getPos(e) {
-            const rect = canvas.getBoundingClientRect();
-            return {
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top
-            };
-        }
-
-        function drawLine(x1, y1, x2, y2) {
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.strokeStyle = fgColor;
-            ctx.lineWidth = lineWidth;
-            ctx.lineCap = 'round';
-            ctx.stroke();
-        }
-
-        function drawRectPreview(x1, y1, x2, y2) {
-            const x = Math.min(x1, x2);
-            const y = Math.min(y1, y2);
-            const w = Math.abs(x2 - x1);
-            const h = Math.abs(y2 - y1);
-            ctx.strokeStyle = fgColor;
-            ctx.lineWidth = lineWidth;
-            ctx.strokeRect(x, y, w, h);
-        }
-
-        function drawEllipsePreview(x1, y1, x2, y2) {
-            const cx = (x1 + x2) / 2;
-            const cy = (y1 + y2) / 2;
-            const rx = Math.abs(x2 - x1) / 2;
-            const ry = Math.abs(y2 - y1) / 2;
-            ctx.beginPath();
-            ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-            ctx.strokeStyle = fgColor;
-            ctx.lineWidth = lineWidth;
-            ctx.stroke();
-        }
-
-        // ===== Mouse Events =====
-
-        canvas.addEventListener('mousedown', (e) => {
-            const pos = getPos(e);
-            isDrawing = true;
-            startX = pos.x;
-            startY = pos.y;
-            lastX = pos.x;
-            lastY = pos.y;
-
-            if (currentTool === 'line' || currentTool === 'rect' || currentTool === 'ellipse') {
-                savedImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            }
-
-            if (currentTool === 'pencil') {
-                ctx.beginPath();
-                ctx.arc(pos.x, pos.y, lineWidth / 2, 0, Math.PI * 2);
-                ctx.fillStyle = fgColor;
-                ctx.fill();
-            }
-
-            if (currentTool === 'eraser') {
-                ctx.beginPath();
-                ctx.arc(pos.x, pos.y, lineWidth * 2, 0, Math.PI * 2);
-                ctx.fillStyle = bgColor;
-                ctx.fill();
-            }
-        });
-
-        canvas.addEventListener('mousemove', (e) => {
-            const pos = getPos(e);
-
-            // Update coordinates
-            document.getElementById('statusCoords').textContent = `${Math.round(pos.x)}, ${Math.round(pos.y)}`;
-
-            if (!isDrawing) return;
-
-            switch (currentTool) {
-                case 'pencil':
-                    ctx.beginPath();
-                    ctx.moveTo(lastX, lastY);
-                    ctx.lineTo(pos.x, pos.y);
-                    ctx.strokeStyle = fgColor;
-                    ctx.lineWidth = lineWidth;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.stroke();
-                    lastX = pos.x;
-                    lastY = pos.y;
-                    break;
-
-                case 'eraser':
-                    ctx.beginPath();
-                    ctx.moveTo(lastX, lastY);
-                    ctx.lineTo(pos.x, pos.y);
-                    ctx.strokeStyle = bgColor;
-                    ctx.lineWidth = lineWidth * 4;
-                    ctx.lineCap = 'round';
-                    ctx.lineJoin = 'round';
-                    ctx.stroke();
-                    lastX = pos.x;
-                    lastY = pos.y;
-                    break;
-
-                case 'line':
-                    ctx.putImageData(savedImageData, 0, 0);
-                    drawLine(startX, startY, pos.x, pos.y);
-                    break;
-
-                case 'rect':
-                    ctx.putImageData(savedImageData, 0, 0);
-                    drawRectPreview(startX, startY, pos.x, pos.y);
-                    break;
-
-                case 'ellipse':
-                    ctx.putImageData(savedImageData, 0, 0);
-                    drawEllipsePreview(startX, startY, pos.x, pos.y);
-                    break;
-            }
-        });
-
-        canvas.addEventListener('mouseup', (e) => {
-            if (!isDrawing) return;
-            const pos = getPos(e);
-
-            switch (currentTool) {
-                case 'line':
-                    ctx.putImageData(savedImageData, 0, 0);
-                    drawLine(startX, startY, pos.x, pos.y);
-                    break;
-                case 'rect':
-                    ctx.putImageData(savedImageData, 0, 0);
-                    drawRectPreview(startX, startY, pos.x, pos.y);
-                    break;
-                case 'ellipse':
-                    ctx.putImageData(savedImageData, 0, 0);
-                    drawEllipsePreview(startX, startY, pos.x, pos.y);
-                    break;
-            }
-
-            isDrawing = false;
-            savedImageData = null;
-        });
-
-        canvas.addEventListener('mouseleave', () => {
-            isDrawing = false;
-        });
-
-        // Prevent context menu on canvas
-        canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-
-        // ===== Status =====
-        const toolNames = {
-            pencil: 'ดินสอ (Pencil)',
-            eraser: 'ยางลบ (Eraser)',
-            line: 'วาดเส้น (Line)',
-            rect: 'วาดสี่เหลี่ยม (Rectangle)',
-            ellipse: 'วาดวงรี (Ellipse)'
-        };
-
-        function updateStatus() {
-            document.getElementById('statusMsg').textContent = `เครื่องมือ: ${toolNames[currentTool]}`;
-        }
-
-        // Init
+    // Resize canvas to fit container
+    function resizeCanvas() {
+        const savedData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        canvas.width = container.clientWidth - 4;
+        canvas.height = container.clientHeight - 4;
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        updateStatus();
-    </script>
+        ctx.putImageData(savedData, 0, 0);
+    }
+
+    // Initial size
+    canvas.width = container.clientWidth - 4;
+    canvas.height = container.clientHeight - 4;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    window.addEventListener('resize', resizeCanvas);
+
+    // ===== State =====
+    let currentTool = 'pencil';
+    let isDrawing = false;
+    let startX, startY;
+    let lastX, lastY;
+    let fgColor = '#000000';
+    let bgColor = '#ffffff';
+    let lineWidth = 1;
+    let savedImageData = null;
+
+    // ===== Color Palette (Classic MS Paint) =====
+    const paletteColors = [
+        '#000000','#808080','#800000','#808000','#008000','#008080','#000080','#800080',
+        '#808040','#004040','#0080ff','#004080','#4000ff','#804000',
+        '#ffffff','#c0c0c0','#ff0000','#ffff00','#00ff00','#00ffff','#0000ff','#ff00ff',
+        '#ffff80','#00ff80','#80ffff','#8080ff','#ff0080','#ff8040'
+    ];
+
+    // Build palette
+    const paletteEl = document.getElementById('palette');
+    paletteColors.forEach(color => {
+        const swatch = document.createElement('div');
+        swatch.className = 'palette-color';
+        swatch.style.background = color;
+        swatch.addEventListener('click', () => {
+            fgColor = color;
+            document.getElementById('currentColorBox').style.background = fgColor;
+            document.querySelectorAll('.palette-color').forEach(s => s.classList.remove('selected'));
+            swatch.classList.add('selected');
+        });
+        paletteEl.appendChild(swatch);
+    });
+
+    // ===== Tool Selection =====
+    const toolBtns = document.querySelectorAll('.tool-btn');
+    const toolMap = {
+        toolPencil: 'pencil',
+        toolEraser: 'eraser',
+        toolLine: 'line',
+        toolRect: 'rect',
+        toolEllipse: 'ellipse'
+    };
+
+    toolBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            toolBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentTool = toolMap[btn.id];
+            // Show/hide eraser size panel
+            const eraserPanel = document.getElementById('eraserSizePanel');
+            if (currentTool === 'eraser') {
+                eraserPanel.classList.add('visible');
+            } else {
+                eraserPanel.classList.remove('visible');
+            }
+            updateCursor();
+            updateStatus();
+        });
+    });
+
+    // ===== Eraser Size Selection =====
+    let eraserSize = 4;
+    const esOptions = document.querySelectorAll('.eraser-size-option');
+    esOptions.forEach(opt => {
+        opt.addEventListener('click', () => {
+            esOptions.forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            eraserSize = parseInt(opt.dataset.esize);
+            updateCursor();
+        });
+    });
+
+    // ===== Custom Eraser Cursor =====
+    function updateCursor() {
+        if (currentTool === 'eraser') {
+            const size = Math.max(eraserSize, 8);
+            const svgCursor = `<svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}'><circle cx='${size/2}' cy='${size/2}' r='${size/2 - 1}' fill='none' stroke='black' stroke-width='1'/></svg>`;
+            const encoded = encodeURIComponent(svgCursor);
+            canvas.style.cursor = `url("data:image/svg+xml,${encoded}") ${size/2} ${size/2}, auto`;
+        } else {
+            canvas.style.cursor = 'crosshair';
+        }
+    }
+
+    // ===== Line Width Selection =====
+    const lwOptions = document.querySelectorAll('.line-width-option');
+    lwOptions.forEach(opt => {
+        opt.addEventListener('click', () => {
+            lwOptions.forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            lineWidth = parseInt(opt.dataset.width);
+        });
+    });
+
+    // ===== Drawing Functions =====
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        return {
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
+        };
+    }
+
+    function drawLine(x1, y1, x2, y2) {
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = fgColor;
+        ctx.lineWidth = lineWidth;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+    }
+
+    function drawRectPreview(x1, y1, x2, y2) {
+        const x = Math.min(x1, x2);
+        const y = Math.min(y1, y2);
+        const w = Math.abs(x2 - x1);
+        const h = Math.abs(y2 - y1);
+        ctx.strokeStyle = fgColor;
+        ctx.lineWidth = lineWidth;
+        ctx.strokeRect(x, y, w, h);
+    }
+
+    function drawEllipsePreview(x1, y1, x2, y2) {
+        const cx = (x1 + x2) / 2;
+        const cy = (y1 + y2) / 2;
+        const rx = Math.abs(x2 - x1) / 2;
+        const ry = Math.abs(y2 - y1) / 2;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = fgColor;
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+    }
+
+    // ===== Mouse Events =====
+
+    canvas.addEventListener('mousedown', (e) => {
+        const pos = getPos(e);
+        isDrawing = true;
+        startX = pos.x;
+        startY = pos.y;
+        lastX = pos.x;
+        lastY = pos.y;
+
+        if (currentTool === 'line' || currentTool === 'rect' || currentTool === 'ellipse') {
+            savedImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        }
+
+        if (currentTool === 'pencil') {
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, lineWidth / 2, 0, Math.PI * 2);
+            ctx.fillStyle = fgColor;
+            ctx.fill();
+        }
+
+        if (currentTool === 'eraser') {
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, eraserSize / 2, 0, Math.PI * 2);
+            ctx.fillStyle = bgColor;
+            ctx.fill();
+        }
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        const pos = getPos(e);
+
+        // Update coordinates
+        document.getElementById('statusCoords').textContent = `${Math.round(pos.x)}, ${Math.round(pos.y)}`;
+
+        if (!isDrawing) return;
+
+        switch (currentTool) {
+            case 'pencil':
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.strokeStyle = fgColor;
+                ctx.lineWidth = lineWidth;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+                lastX = pos.x;
+                lastY = pos.y;
+                break;
+
+            case 'eraser':
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.strokeStyle = bgColor;
+                ctx.lineWidth = eraserSize;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+                lastX = pos.x;
+                lastY = pos.y;
+                break;
+
+            case 'line':
+                ctx.putImageData(savedImageData, 0, 0);
+                drawLine(startX, startY, pos.x, pos.y);
+                break;
+
+            case 'rect':
+                ctx.putImageData(savedImageData, 0, 0);
+                drawRectPreview(startX, startY, pos.x, pos.y);
+                break;
+
+            case 'ellipse':
+                ctx.putImageData(savedImageData, 0, 0);
+                drawEllipsePreview(startX, startY, pos.x, pos.y);
+                break;
+        }
+    });
+
+    canvas.addEventListener('mouseup', (e) => {
+        if (!isDrawing) return;
+        const pos = getPos(e);
+
+        switch (currentTool) {
+            case 'line':
+                ctx.putImageData(savedImageData, 0, 0);
+                drawLine(startX, startY, pos.x, pos.y);
+                break;
+            case 'rect':
+                ctx.putImageData(savedImageData, 0, 0);
+                drawRectPreview(startX, startY, pos.x, pos.y);
+                break;
+            case 'ellipse':
+                ctx.putImageData(savedImageData, 0, 0);
+                drawEllipsePreview(startX, startY, pos.x, pos.y);
+                break;
+        }
+
+        isDrawing = false;
+        savedImageData = null;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        isDrawing = false;
+    });
+
+    // Prevent context menu on canvas
+    canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    // ===== Status =====
+    const toolNames = {
+        pencil: 'ดินสอ (Pencil)',
+        eraser: 'ยางลบ (Eraser)',
+        line: 'วาดเส้น (Line)',
+        rect: 'วาดสี่เหลี่ยม (Rectangle)',
+        ellipse: 'วาดวงรี (Ellipse)'
+    };
+
+    function updateStatus() {
+        document.getElementById('statusMsg').textContent = `เครื่องมือ: ${toolNames[currentTool]}`;
+    }
+</script>
 
 </body>
-
 </html>
