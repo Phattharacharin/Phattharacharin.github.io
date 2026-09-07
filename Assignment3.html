@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Assignment #3 : Next Gen Rendering</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #111;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+    <-- โหลดไลบรารี Three.js, OrbitControls, RGBELoader, GLTFLoader และ lil-gui -->
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.18"></script>
+</head>
+
+<body>
+    <script>
+        // 1. ตั้งค่าพื้นฐาน: Scene, Camera, Renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        document.body.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
+
+
+        // เพิ่มระยะมองเห็น (far) จาก 100 เป็น 1000 เพื่อไม่ให้วัตถุโดนตัดหายไปเวลาซูมออก
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 3, 6);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        // ปิดการ Pan กล้อง เพื่อเวลาหมุนดูฉากจะได้ไม่รู้สึกหลุดกรอบ HDRI
+        controls.enablePan = false;
+
+
+        // 2. โหลด HDRI (Ferndale Studio 04) สำหรับสะท้อนแสง PBR
+        const hdrUrl = 'https://phattharacharin.github.io/Environtment/ferndale_studio_04_2k.hdr';
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        pmremGenerator.compileEquirectangularShader();
+
+        new THREE.RGBELoader().setDataType(THREE.UnsignedByteType).load(hdrUrl, (texture) => {
+            const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+
+            // เปิด HDRI เป็นฉากหลังกลับมา  Environment Map 
+            scene.background = envMap;
+
+            // ให้แสงสะท้อนจาก HDRI ลงบนวัตถุ
+            scene.environment = envMap;
+
+            texture.dispose();
+            pmremGenerator.dispose();
+        });
+
+        // 3. ระบบแสง (Lighting)
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        // ยกแสงอาทิตย์ให้สูงขึ้น (เพิ่มแกน Y) เพื่อให้เงาสั้นลงและไม่ทอดยาวทะลุขอบพื้น
+        dirLight.position.set(5, 40, 5);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 2048;
+        dirLight.shadow.mapSize.height = 2048;
+
+        // --- ส่วนที่จำเป็นสำหรับการขยายอาณาเขตเงา---
+        dirLight.shadow.camera.top = 30;
+        dirLight.shadow.camera.bottom = -30;
+        dirLight.shadow.camera.left = -30;
+        dirLight.shadow.camera.right = 30;
+        dirLight.shadow.camera.near = 0.1;
+        dirLight.shadow.camera.far = 150; // เพิ่มระยะ far ให้ครอบคลุมเมื่อแสงอยู่ไกลขึ้น
+        dirLight.shadow.bias = -0.001;
+        // ----------------------------------------------------
+
+        scene.add(dirLight);
+
+        // เพิ่มตัวช่วยแสดงทิศทางแสง (Light Helper)
+        const lightHelper = new THREE.DirectionalLightHelper(dirLight, 5);
+        scene.add(lightHelper);
+        lightHelper.visible = false; // เริ่มต้นปิดไว้ก่อน
+
+        // หน้าต่าง GUI ควบคุม (ย้ายไปมุมขวาล่าง)
+        const gui = new lil.GUI({ title: 'Control Panel' });
+        gui.domElement.style.position = 'absolute';
+        gui.domElement.style.bottom = '10px';
+        gui.domElement.style.right = '10px';
+        gui.domElement.style.top = 'auto';
+
+        const guiParams = {
+            showHelper: false,
+            autoOrbit: false
+        };
+
+        const lightFolder = gui.addFolder('💡 ควบคุมแสงและลูกเล่น');
+        // ใส่ .listen() เพื่อให้แถบเลื่อนอัปเดตตามเวลาแสงหมุนอัตโนมัติ
+        lightFolder.add(dirLight.position, 'x', -50, 50).name('แกน X').listen();
+        lightFolder.add(dirLight.position, 'y', 0, 50).name('แกน Y').listen();
+        lightFolder.add(dirLight.position, 'z', -50, 50).name('แกน Z').listen();
+        lightFolder.add(dirLight, 'intensity', 0, 5).name('ความสว่าง');
+
+        // ลูกเล่นใหม่: โชว์ทิศทางแสง, และให้แสงหมุนรอบฉาก
+        lightFolder.add(guiParams, 'showHelper').name('📦 โชว์กล่องกำเนิดแสง').onChange((val) => {
+            lightHelper.visible = val;
+        });
+        lightFolder.add(guiParams, 'autoOrbit').name('🔄 แสงหมุนอัตโนมัติ');
+
+        // 4. วัสดุ PBR และวัตถุ (Characters & Structures)
+        const gltfLoader = new THREE.GLTFLoader();
+        const robotUrl = 'https://phattharacharin.github.io/models/robott.glb';
+
+        gltfLoader.load(robotUrl, (gltf) => {
+            const robot = gltf.scene;
+
+            robot.traverse((child) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+
+            // อัปเดตพิกัดวัตถุทั้งหมดก่อนคำนวณตำแหน่งจริง
+            robot.updateMatrixWorld(true);
+
+            const box = new THREE.Box3().setFromObject(robot);
+            const minY = box.min.y;
+
+            // หากเท่ายังดูลอยอยู่ ให้ปรับเพิ่มค่า offset ตรงนี้ (เช่น 0.05 ถึง 0.15) เพื่อกดเท้าลงพื้น
+            const offset = 0.08;
+            robot.position.set(5.0, -minY - offset, 0);
+
+            robot.scale.set(1, 1, 1);
+            robot.name = 'myRobot';
+            scene.add(robot);
+
+
+
+            // GUI ปรับระดับ Y แบบละเอียดเรียลไทม์
+            const robotFolder = gui.addFolder('ปรับตำแหน่งหุ่นยนต์');
+            robotFolder.add(robot.position, 'x', 5, 10, 0.1).name('แกน X');
+            robotFolder.add(robot.position, 'z', -5, 5, 0.1).name('แกน Z');
+        });
+        // โหลดเก้าอี้
+        const chairUrl = 'https://raw.githubusercontent.com/Phattharacharin/Phattharacharin.github.io/main/building/home.glb';
+        gltfLoader.load(chairUrl, (gltf) => {
+            const chair = gltf.scene;
+            chair.traverse((child) => {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+
+            // คำนวณให้ขาเก้าอี้ติดพื้น Y = 0
+            const chairBox = new THREE.Box3().setFromObject(chair);
+            const chairMinY = chairBox.min.y;
+            // ขยับบ้านออกจากจุดศูนย์กลาง (เลื่อนไปทางแกน X และ Z)
+            chair.position.set(-8, -chairMinY, -8);
+
+            scene.add(chair);
+        });
+
+        // ============================================================
+        // 4.5 ลบกำแพงออกตามที่ผู้ใช้ต้องการ
+        // ============================================================
+
+        // 5. พื้นฉาก (Floor) - ปูพื้นให้เป็นโมเดลจริงๆ แบบฉากถนน
+        const texLoader = new THREE.TextureLoader();
+        const mapColor = texLoader.load('https://phattharacharin.github.io/Environtment/brick_pavement_03_diff_1k.jpg');
+        const mapNormal = texLoader.load('https://phattharacharin.github.io/Environtment/brick_pavement_03_nor_gl_1k1.jpg');
+
+        mapColor.wrapS = THREE.RepeatWrapping;
+        mapColor.wrapT = THREE.RepeatWrapping;
+        mapColor.repeat.set(100, 100);
+
+        mapNormal.wrapS = THREE.RepeatWrapping;
+        mapNormal.wrapT = THREE.RepeatWrapping;
+        mapNormal.repeat.set(100, 100);
+
+        const floorMat = new THREE.MeshStandardMaterial({
+            map: mapColor,
+            normalMap: mapNormal,
+            roughness: 0.8,
+            metalness: 0.0
+        });
+
+        // สร้างพื้นกว้างๆ แบบพอเหมาะ
+        const floorGeo = new THREE.PlaneGeometry(100, 100);
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.receiveShadow = true;
+        scene.add(floor);
+
+        // ปิด Fog ออกไป เพราะมันทำให้เวลาซูมกล้องออกแล้ววัตถุจางกลายเป็นสีเทา/ขาว
+        // scene.fog = new THREE.FogExp2(0x9aa7b3, 0.015);
+
+        // Resize อัตโนมัติเมื่อย่อขยายหน้าจอ
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // 6. Animation Loop
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // ลูกเล่น: แสงหมุนรอบฉากอัตโนมัติ
+            if (guiParams.autoOrbit) {
+                time += 0.005;
+                dirLight.position.x = Math.cos(time) * 40;
+                dirLight.position.z = Math.sin(time) * 40;
+            }
+            if (lightHelper.visible) {
+                lightHelper.update(); // อัปเดตกล่องทิศทางแสงตามตำแหน่งใหม่
+            }
+
+            const myRobot = scene.getObjectByName('myRobot');
+            if (myRobot) {
+                myRobot.rotation.y += 0.01;
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+
+</html>
