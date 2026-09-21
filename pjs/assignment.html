@@ -67,7 +67,7 @@
 
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
-        controls.maxDistance = 50; // ปรับให้ซูมออกได้มากขึ้น
+        controls.maxDistance = 50; // จำกัดระยะการซูมออก
         controls.maxPolarAngle = Math.PI / 2 + 0.1; // ไม่ให้ลงไปใต้ดิน
 
 
@@ -78,23 +78,23 @@
         scene.add(ambientLight);
 
         const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-        dirLight.position.set(20, 30, 20); // ขยับไฟให้สูงขึ้นเพื่อคลุมโมเดลขนาดจริง
+        dirLight.position.set(20, 30, 20);
         dirLight.castShadow = true;
-        dirLight.shadow.mapSize.width = 2048; // เพิ่มความละเอียดเงาให้คมขึ้น
+        dirLight.shadow.mapSize.width = 2048; // ตั้งค่าความละเอียดเงา
         dirLight.shadow.mapSize.height = 2048;
         dirLight.shadow.camera.near = 0.5;
         dirLight.shadow.camera.far = 100;
-        // ขยายกรอบการเรนเดอร์เงาให้กว้างขึ้นคลุมทั้งพื้น 10x10 ของคุณ
+        // กำหนดขอบเขตการคำนวณเงา
         dirLight.shadow.camera.left = -30;
         dirLight.shadow.camera.right = 30;
         dirLight.shadow.camera.top = 30;
         dirLight.shadow.camera.bottom = -30;
-        // แก้ปัญหาเงามีลายเส้นๆ (Shadow acne) ซ้อนบนพื้นหญ้า
+        // ป้องกันปัญหา Shadow acne บนพื้นผิว
         dirLight.shadow.bias = -0.001; 
         scene.add(dirLight);
 
         // ==========================================
-        // 3. โหลด Model หลัก (จาก Github ของผู้เรียน)
+        // 3. โหลด Model หลัก
         // ==========================================
         const loader = new GLTFLoader();
         loader.load('https://phattharacharin.github.io/pjs/house.glb', (gltf) => {
@@ -108,7 +108,6 @@
                 }
             });
 
-            // ใช้สเกลและตำแหน่งดั้งเดิมของโมเดลตามที่คุณตั้งค่ามาจาก Blender
             scene.add(model);
         });
 
