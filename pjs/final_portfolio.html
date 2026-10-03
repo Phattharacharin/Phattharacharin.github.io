@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D Portfolio</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: sans-serif;
+            font-size: 24px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px 40px;
+            border-radius: 10px;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-family: sans-serif;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+            pointer-events: none;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+
+
+        #camera-helper {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: lime;
+            font-family: monospace;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        #tooltip {
+            position: absolute;
+            display: none;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            pointer-events: none;
+            font-family: sans-serif;
+            font-size: 14px;
+            z-index: 1000;
+            transition: opacity 0.2s;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loading">Loading Portfolio...</div>
+    <div id="tooltip"></div>
+    <div id="camera-helper">Camera Pos: X: 0.00, Y: 0.00, Z: 0.00</div>
+    <div id="instructions">
+        Click on named objects to navigate <br> 
+        Left Click + drag to rotate | Right Click + drag to pan <br>
+        Scroll wheel to zoom | Numpad (1, 3, 7, 9) for quick views <br>
+        Press Spacebar or Click Door to open/close
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fflate@0.6.9/umd/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/DRACOLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.physicallyCorrectLights = true; renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+        document.body.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene(); let mixer, actionOpen, actionClose, isDoorOpen = false;
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0.19, 1.98, 12.89);
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 0, 0); controls.enableDamping = true; controls.dampingFactor = 0.05;
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+        const dirLight = new THREE.DirectionalLight(0xfffae6, 2.5);
+        dirLight.position.set(10, 15, 10); dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = dirLight.shadow.mapSize.height = 2048; dirLight.shadow.bias = -0.0005;
+        Object.assign(dirLight.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 0.1, far: 50 });
+        scene.add(dirLight);
+
+        const pmremGenerator = new THREE.PMREMGenerator(renderer); pmremGenerator.compileEquirectangularShader();
+        new THREE.RGBELoader().setDataType(THREE.UnsignedByteType).load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/golden_bay_1k.hdr', (texture) => {
+            scene.background = scene.environment = pmremGenerator.fromEquirectangular(texture).texture;
+            texture.dispose(); pmremGenerator.dispose();
+        });
+
+        const waveUniforms = { uTime: { value: 0.0 } };
+        const baseUniforms = { uTime: { value: 0 }, uLightDir: { value: new THREE.Vector3(0.4, 1, 0.8).normalize() }, uCameraPos: { value: camera.position } };
+        const celUniforms = { ...baseUniforms, uColor: { value: new THREE.Color(0xff66cc) } };
+        const phongUniforms = { ...baseUniforms, uColor: { value: new THREE.Color(0x0080ff) } };
+        const sphere002Uniforms = { ...baseUniforms, uColor: { value: new THREE.Color(0x00ff00) } };
+
+        const sharedVS = `uniform float uTime;varying vec3 vNormal;varying vec2 vUv;varying vec3 vPosW;void main(){vUv=uv;vec3 p=position;p.z+=sin(p.x*5.+uTime)*0.1;vNormal=normalize(mat3(modelMatrix)*normal);vPosW=(modelMatrix*vec4(p,1.0)).xyz;gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);}`;
+        const celFS = `precision mediump float;uniform float uTime;uniform vec3 uLightDir;uniform vec3 uCameraPos;uniform vec3 uColor;varying vec3 vNormal;varying vec2 vUv;varying vec3 vPosW;void main(){vec3 N=normalize(vNormal),L=normalize(uLightDir);float d=floor(max(dot(N,L),0.0)*3.)/3.;float s=smoothstep(0.4,0.6,pow(max(dot(reflect(-L,N),normalize(uCameraPos-vPosW)),0.0),1.0));gl_FragColor=vec4((uColor*(0.5+d))+vec3(s)*0.5,1.0);}`;
+        const phongFS = `precision mediump float;uniform float uTime;uniform vec3 uLightDir;uniform vec3 uCameraPos;uniform vec3 uColor;varying vec3 vNormal;varying vec2 vUv;varying vec3 vPosW;void main(){vec3 N=normalize(vNormal),L=normalize(uLightDir);float d=max(dot(N,L),0.0),s=pow(max(dot(reflect(-L,N),normalize(uCameraPos-vPosW)),0.0),128.0);gl_FragColor=vec4((uColor*(0.5+d))+vec3(s*0.7),1.0);}`;
+
+        let clickableObjects = [];
+        const buttonNames = ['AboutMe', 'credit', 'Nav', 'Portfolio', 'Qr', 'TechSk', 'hf_abMe', 'nf_abMe', 'hf_credit', 'hf_profile', 'nf_profile', 'door_animation', 'door_opening', 'door_closing', 'door', 'profile', 'mypf', 'PBRSphere', 'Sphere', 'Sphere.002', 'Sphere.007'];
+        const hoverInfo = { 'Sphere': 'Cel Shading (Toon Material)', 'Sphere.002': 'Cel Shading (Toon Material)', 'Sphere.007': 'Custom Phong Shader (High Specular)', 'PBRSphere': 'PBR Material (Standard)', 'mypf': 'Profile Picture (Texture)', 'wave': 'Vertex Shader (Real-time Wave Animation)' };
+
+        const dracoLoader = new THREE.DRACOLoader(); dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.1/');
+        const loader = new THREE.GLTFLoader(); loader.setDRACOLoader(dracoLoader);
+
+        loader.load('https://raw.githubusercontent.com/Phattharacharin/Phattharacharin.github.io/main/pjs/homee__lesss.glb?v=11', (gltf) => {
+            const model = gltf.scene;
+            if (gltf.animations.length > 0) {
+                mixer = new THREE.AnimationMixer(model);
+                const op = THREE.AnimationClip.findByName(gltf.animations, 'door_opening'), cl = THREE.AnimationClip.findByName(gltf.animations, 'door_closing');
+                if (op) { actionOpen = mixer.clipAction(op); actionOpen.setLoop(THREE.LoopOnce); actionOpen.clampWhenFinished = true; actionOpen.play(); actionOpen.paused = true; }
+                if (cl) { actionClose = mixer.clipAction(cl); actionClose.setLoop(THREE.LoopOnce); actionClose.clampWhenFinished = true; }
+            }
+
+            model.traverse((child) => {
+                if (child.isLight) { child.castShadow = true; child.shadow.mapSize.width = 2048; child.shadow.mapSize.height = 2048; child.shadow.bias = -0.001; }
+                if (child.isMesh) {
+                    child.castShadow = child.receiveShadow = true;
+                    if (child.parent && (buttonNames.includes(child.parent.name) || hoverInfo[child.parent.name])) child.name = child.parent.name;
+                    if (child.name === 'wave') {
+                        const originalMat = child.material.clone();
+                        originalMat.onBeforeCompile = (shader) => {
+                            shader.uniforms.uTime = waveUniforms.uTime;
+                            shader.vertexShader = 'uniform float uTime;\n' + shader.vertexShader.replace('#include <begin_vertex>', `vec3 transformed=vec3(position); transformed.y+=sin(transformed.x*8.+uTime*4.5)*0.8; transformed.y+=cos(transformed.z*8.+uTime*3.0)*0.4;`);
+                        };
+                        child.material = originalMat;
+                    }
+                    if (child.name === 'Sphere') {
+                        if (child.material) { if (child.material.color) celUniforms.uColor.value.copy(child.material.color);[].concat(child.material).forEach(mat => mat.dispose()); }
+                        child.material = new THREE.ShaderMaterial({ vertexShader: sharedVS, fragmentShader: celFS, uniforms: celUniforms, side: THREE.DoubleSide });
+                    }
+                    if (child.name === 'Sphere.007') {
+                        if (child.material) { if (child.material.color) phongUniforms.uColor.value.copy(child.material.color);[].concat(child.material).forEach(mat => mat.dispose()); }
+                        child.material = new THREE.ShaderMaterial({ vertexShader: sharedVS, fragmentShader: phongFS, uniforms: phongUniforms, side: THREE.DoubleSide });
+                    }
+                    if (child.name === 'Sphere.002') {
+                        if (child.material) { if (child.material.color) sphere002Uniforms.uColor.value.copy(child.material.color);[].concat(child.material).forEach(mat => mat.dispose()); }
+                        child.material = new THREE.ShaderMaterial({ vertexShader: sharedVS, fragmentShader: celFS, uniforms: sphere002Uniforms, side: THREE.DoubleSide });
+                    }
+                    if (child.name === 'mypf' && child.material) child.material.side = THREE.DoubleSide;
+                    if (buttonNames.includes(child.name) || child.name.toLowerCase().includes('home')) clickableObjects.push(child);
+                }
+            });
+
+            const center = new THREE.Box3().setFromObject(model).getCenter(new THREE.Vector3()); model.position.sub(center); scene.add(model);
+            if (gltf.animations.length > 0) {
+                if (!mixer) mixer = new THREE.AnimationMixer(model);
+                gltf.animations.forEach((clip) => {
+                    if (!clip.name.toLowerCase().includes('door') && clip.name !== 'Plane.026Action' && !clip.name.includes('Stash')) mixer.clipAction(clip).play();
+                });
+            }
+            document.getElementById('loading').style.opacity = '0'; setTimeout(() => document.getElementById('loading').style.display = 'none', 500);
+        });
+
+        const raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2(), tooltip = document.getElementById('tooltip');
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1; mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            if (intersects.length > 0) {
+                const name = intersects[0].object.name;
+                if (hoverInfo[name]) {
+                    tooltip.innerHTML = hoverInfo[name]; tooltip.style.display = 'block'; tooltip.style.left = (event.clientX + 15) + 'px'; tooltip.style.top = (event.clientY + 15) + 'px'; document.body.style.cursor = 'pointer';
+                } else if (name === 'Plane') {
+                    tooltip.innerHTML = 'Area: 10x10 Units'; tooltip.style.display = 'block'; tooltip.style.left = (event.clientX + 15) + 'px'; tooltip.style.top = (event.clientY + 15) + 'px'; document.body.style.cursor = 'default';
+                } else {
+                    tooltip.style.display = 'none'; document.body.style.cursor = raycaster.intersectObjects(clickableObjects, true).length > 0 ? 'pointer' : 'default';
+                }
+            } else { tooltip.style.display = 'none'; document.body.style.cursor = 'default'; }
+        });
+
+        window.addEventListener('click', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1; mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera); const intersects = raycaster.intersectObjects(clickableObjects, true);
+            if (intersects.length > 0) {
+                const targetObj = intersects[0].object, n = targetObj.name;
+                if (n === 'door_animation' || n === 'door') {
+                    isDoorOpen = !isDoorOpen;
+                    if (isDoorOpen) { if (actionClose) actionClose.stop(); if (actionOpen) { actionOpen.reset(); actionOpen.setLoop(THREE.LoopOnce); actionOpen.clampWhenFinished = true; actionOpen.paused = false; actionOpen.play(); } }
+                    else { if (actionOpen) actionOpen.stop(); if (actionClose) { actionClose.reset(); actionClose.setLoop(THREE.LoopOnce); actionClose.clampWhenFinished = true; actionClose.paused = false; actionClose.play(); } }
+                    return;
+                }
+                if (n === 'Qr') { window.open('https://phattharacharin.github.io/Portfolio/', '_blank'); return; }
+
+                const targetPos = new THREE.Box3().setFromObject(targetObj).getCenter(new THREE.Vector3());
+                let dirFromCenter = targetPos.clone().setY(0).normalize(); if (dirFromCenter.lengthSq() < 0.01) dirFromCenter.set(0, 0, 1);
+
+                let cPos = targetPos.clone().add(dirFromCenter.multiplyScalar(6)).add(new THREE.Vector3(0, 0.5, 0)), tPos = targetPos;
+                if (n === 'profile') { cPos.set(4.68, 0.94, -1.57); tPos.set(0.80, -0.70, -1.83); }
+                else if (n === 'AboutMe' || n === 'TechSk' || n === 'nf_profile') { cPos.set(-8.38, 1.22, -3.31); tPos.set(2.88, -0.18, 4.58); }
+                else if (n === 'credit' || n === 'nf_abMe') { cPos.set(0.33, -0.49, -7.54); tPos.set(0, 0, 0); }
+                else if (n === 'Portfolio') { cPos.set(4.24, -0.11, 7.04); tPos.set(0, 0, 0); }
+                else if (n === 'mypf') { cPos.set(3.02, 0.45, -0.73); tPos.set(0.56, -0.12, -0.61); }
+                else if (n.startsWith('hf') || n.toLowerCase().includes('hm')) { cPos.set(4.17, 1.13, 7.88); tPos.set(1.35, -2.08, -0.71); }
+
+                gsap.to(camera.position, { x: cPos.x, y: cPos.y, z: cPos.z, duration: 1.5, ease: "power2.inOut" });
+                gsap.to(controls.target, { x: tPos.x, y: tPos.y, z: tPos.z, duration: 1.5, ease: "power2.inOut" });
+            }
+        });
+
+        window.addEventListener('keydown', (event) => {
+            if (event.code === 'Space') {
+                isDoorOpen = !isDoorOpen;
+                if (isDoorOpen) { if (actionClose) actionClose.stop(); if (actionOpen) { actionOpen.reset(); actionOpen.paused = false; actionOpen.play(); } }
+                else { if (actionOpen) actionOpen.stop(); if (actionClose) { actionClose.reset(); actionClose.paused = false; actionClose.play(); } }
+                return;
+            }
+            let cPos = null; const d = 12;
+            if (event.code === 'Numpad1' || event.code === 'Digit1') cPos = new THREE.Vector3(0, 0, d);
+            else if (event.code === 'Numpad3' || event.code === 'Digit3') cPos = new THREE.Vector3(d, 0, 0);
+            else if (event.code === 'Numpad7' || event.code === 'Digit7') cPos = new THREE.Vector3(0, d, 0);
+            else if (event.code === 'Numpad9' || event.code === 'Digit9') cPos = new THREE.Vector3(0, 0, -d);
+            if (cPos) {
+                gsap.to(camera.position, { x: cPos.x, y: cPos.y, z: cPos.z, duration: 1.0, ease: "power2.inOut" });
+                gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1.0, ease: "power2.inOut" });
+            }
+        });
+
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta(), elapsedTime = clock.getElapsedTime();
+            waveUniforms.uTime.value = celUniforms.uTime.value = phongUniforms.uTime.value = sphere002Uniforms.uTime.value = elapsedTime;
+            if (mixer) mixer.update(delta);
+            controls.update();
+            const helper = document.getElementById('camera-helper');
+            if (helper) helper.innerHTML = `Cam: ${camera.position.x.toFixed(2)}, ${camera.position.y.toFixed(2)}, ${camera.position.z.toFixed(2)} | Target: ${controls.target.x.toFixed(2)}, ${controls.target.y.toFixed(2)}, ${controls.target.z.toFixed(2)}`;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>
